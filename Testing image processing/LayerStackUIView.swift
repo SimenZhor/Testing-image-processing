@@ -15,18 +15,7 @@ class LayerStackUIView: UIView {
     
     func newLayer(_ layer: UIImageView){
         
-        layer.frame = aspectResize(layer.image!, size: CGRect(x: 0, y: 0, width: self.frame.width, height: self.frame.height))
-        let size = layer.frame.size
-        layer.frame.origin.x = (self.bounds.midX - (size.width*0.5))
-        layer.frame.origin.y = (self.bounds.midY - (size.height*0.5))
-        
-        layers.append(layer)
-        deselector(currentSelection)
-        currentSelection = layers.count - 1
-        selector(currentSelection)
-        self.addSubview(layer)
-        
-        
+      
         
     }
     
