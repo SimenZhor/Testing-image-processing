@@ -30,6 +30,10 @@
 	<array>
 		<string>armv7</string>
 	</array>
+	<key>NSCameraUsageDescription</key>
+	<string>In order to use the camera, we need your permission</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>This app is totally useless without photo library access</string>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>

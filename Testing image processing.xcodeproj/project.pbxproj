@@ -14,6 +14,9 @@
 		F19C440F1D29C14200457630 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F19C440D1D29C14200457630 /* LaunchScreen.storyboard */; };
 		F19C441A1D29C14200457630 /* Testing_image_processingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F19C44191D29C14200457630 /* Testing_image_processingTests.swift */; };
 		F19C44251D29C14200457630 /* Testing_image_processingUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F19C44241D29C14200457630 /* Testing_image_processingUITests.swift */; };
+		F19C44331D29D71900457630 /* uiimageextension.swift in Sources */ = {isa = PBXBuildFile; fileRef = F19C44321D29D71900457630 /* uiimageextension.swift */; };
+		F1A07B1A1D2A619600EB6983 /* LayerStackUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1A07B191D2A619600EB6983 /* LayerStackUIView.swift */; };
+		F1A07B1C1D2A662600EB6983 /* Toolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1A07B1B1D2A662600EB6983 /* Toolbar.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -47,6 +50,9 @@
 		F19C44201D29C14200457630 /* Testing image processingUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Testing image processingUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		F19C44241D29C14200457630 /* Testing_image_processingUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Testing_image_processingUITests.swift; sourceTree = "<group>"; };
 		F19C44261D29C14200457630 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		F19C44321D29D71900457630 /* uiimageextension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = uiimageextension.swift; sourceTree = "<group>"; };
+		F1A07B191D2A619600EB6983 /* LayerStackUIView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LayerStackUIView.swift; sourceTree = "<group>"; };
+		F1A07B1B1D2A662600EB6983 /* Toolbar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Toolbar.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -99,7 +105,10 @@
 			children = (
 				F19C44041D29C14200457630 /* AppDelegate.swift */,
 				F19C44061D29C14200457630 /* ViewController.swift */,
+				F1A07B191D2A619600EB6983 /* LayerStackUIView.swift */,
 				F19C44081D29C14200457630 /* Main.storyboard */,
+				F1A07B1B1D2A662600EB6983 /* Toolbar.swift */,
+				F19C44321D29D71900457630 /* uiimageextension.swift */,
 				F19C440B1D29C14200457630 /* Assets.xcassets */,
 				F19C440D1D29C14200457630 /* LaunchScreen.storyboard */,
 				F19C44101D29C14200457630 /* Info.plist */,
@@ -194,15 +203,18 @@
 					F19C44001D29C14100457630 = {
 						CreatedOnToolsVersion = 7.3.1;
 						DevelopmentTeam = 2BMWPNJ962;
+						LastSwiftMigration = 0810;
 					};
 					F19C44141D29C14200457630 = {
 						CreatedOnToolsVersion = 7.3.1;
 						DevelopmentTeam = 2BMWPNJ962;
+						LastSwiftMigration = 0810;
 						TestTargetID = F19C44001D29C14100457630;
 					};
 					F19C441F1D29C14200457630 = {
 						CreatedOnToolsVersion = 7.3.1;
 						DevelopmentTeam = 2BMWPNJ962;
+						LastSwiftMigration = 0810;
 						TestTargetID = F19C44001D29C14100457630;
 					};
 				};
@@ -259,7 +271,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F1A07B1A1D2A619600EB6983 /* LayerStackUIView.swift in Sources */,
 				F19C44071D29C14200457630 /* ViewController.swift in Sources */,
+				F1A07B1C1D2A662600EB6983 /* Toolbar.swift in Sources */,
+				F19C44331D29D71900457630 /* uiimageextension.swift in Sources */,
 				F19C44051D29C14200457630 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -402,10 +417,14 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = "Testing image processing/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.Testing-image-processing";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
+				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
 		};
@@ -413,10 +432,14 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = "Testing image processing/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.Testing-image-processing";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
+				SWIFT_VERSION = 3.0;
 			};
 			name = Release;
 		};
@@ -428,6 +451,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.Testing-image-processingTests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Testing image processing.app/Testing image processing";
 			};
 			name = Debug;
@@ -440,6 +464,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.Testing-image-processingTests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Testing image processing.app/Testing image processing";
 			};
 			name = Release;
@@ -451,6 +476,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.Testing-image-processingUITests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
 				TEST_TARGET_NAME = "Testing image processing";
 			};
 			name = Debug;
@@ -462,6 +488,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.Testing-image-processingUITests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
 				TEST_TARGET_NAME = "Testing image processing";
 			};
 			name = Release;
@@ -485,6 +512,7 @@
 				F19C442B1D29C14200457630 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		F19C442C1D29C14200457630 /* Build configuration list for PBXNativeTarget "Testing image processingTests" */ = {
 			isa = XCConfigurationList;
@@ -493,6 +521,7 @@
 				F19C442E1D29C14200457630 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		F19C442F1D29C14200457630 /* Build configuration list for PBXNativeTarget "Testing image processingUITests" */ = {
 			isa = XCConfigurationList;
@@ -501,6 +530,7 @@
 				F19C44311D29C14200457630 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
