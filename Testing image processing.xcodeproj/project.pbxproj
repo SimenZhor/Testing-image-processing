@@ -17,6 +17,8 @@
 		F19C44331D29D71900457630 /* uiimageextension.swift in Sources */ = {isa = PBXBuildFile; fileRef = F19C44321D29D71900457630 /* uiimageextension.swift */; };
 		F1A07B1A1D2A619600EB6983 /* LayerStackUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1A07B191D2A619600EB6983 /* LayerStackUIView.swift */; };
 		F1A07B1C1D2A662600EB6983 /* Toolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1A07B1B1D2A662600EB6983 /* Toolbar.swift */; };
+		F1B11D2F1E1EF18A00283BFF /* UIImageViewLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1B11D2E1E1EF18A00283BFF /* UIImageViewLayer.swift */; };
+		F1B2F4611E1D217D004A8ABE /* ViewControllerBackup.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1B2F4601E1D217D004A8ABE /* ViewControllerBackup.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -39,7 +41,7 @@
 /* Begin PBXFileReference section */
 		F19C44011D29C14100457630 /* Testing image processing.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Testing image processing.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		F19C44041D29C14200457630 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		F19C44061D29C14200457630 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		F19C44061D29C14200457630 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; usesTabs = 0; };
 		F19C44091D29C14200457630 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		F19C440B1D29C14200457630 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		F19C440E1D29C14200457630 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -53,6 +55,8 @@
 		F19C44321D29D71900457630 /* uiimageextension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = uiimageextension.swift; sourceTree = "<group>"; };
 		F1A07B191D2A619600EB6983 /* LayerStackUIView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LayerStackUIView.swift; sourceTree = "<group>"; };
 		F1A07B1B1D2A662600EB6983 /* Toolbar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Toolbar.swift; sourceTree = "<group>"; };
+		F1B11D2E1E1EF18A00283BFF /* UIImageViewLayer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIImageViewLayer.swift; sourceTree = "<group>"; };
+		F1B2F4601E1D217D004A8ABE /* ViewControllerBackup.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ViewControllerBackup.swift; path = "Testing image processing/ViewControllerBackup.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -83,6 +87,7 @@
 		F19C43F81D29C14000457630 = {
 			isa = PBXGroup;
 			children = (
+				F1B2F4601E1D217D004A8ABE /* ViewControllerBackup.swift */,
 				F19C44031D29C14100457630 /* Testing image processing */,
 				F19C44181D29C14200457630 /* Testing image processingTests */,
 				F19C44231D29C14200457630 /* Testing image processingUITests */,
@@ -106,6 +111,7 @@
 				F19C44041D29C14200457630 /* AppDelegate.swift */,
 				F19C44061D29C14200457630 /* ViewController.swift */,
 				F1A07B191D2A619600EB6983 /* LayerStackUIView.swift */,
+				F1B11D2E1E1EF18A00283BFF /* UIImageViewLayer.swift */,
 				F19C44081D29C14200457630 /* Main.storyboard */,
 				F1A07B1B1D2A662600EB6983 /* Toolbar.swift */,
 				F19C44321D29D71900457630 /* uiimageextension.swift */,
@@ -197,7 +203,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0730;
-				LastUpgradeCheck = 0730;
+				LastUpgradeCheck = 0820;
 				ORGANIZATIONNAME = "Simen E. Sørensen";
 				TargetAttributes = {
 					F19C44001D29C14100457630 = {
@@ -273,6 +279,8 @@
 			files = (
 				F1A07B1A1D2A619600EB6983 /* LayerStackUIView.swift in Sources */,
 				F19C44071D29C14200457630 /* ViewController.swift in Sources */,
+				F1B11D2F1E1EF18A00283BFF /* UIImageViewLayer.swift in Sources */,
+				F1B2F4611E1D217D004A8ABE /* ViewControllerBackup.swift in Sources */,
 				F1A07B1C1D2A662600EB6983 /* Toolbar.swift in Sources */,
 				F19C44331D29D71900457630 /* uiimageextension.swift in Sources */,
 				F19C44051D29C14200457630 /* AppDelegate.swift in Sources */,
@@ -344,8 +352,10 @@
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
@@ -389,8 +399,10 @@
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
@@ -409,6 +421,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
+				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
@@ -419,6 +432,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				DEVELOPMENT_TEAM = 2BMWPNJ962;
 				INFOPLIST_FILE = "Testing image processing/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.Testing-image-processing";
@@ -434,6 +448,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				DEVELOPMENT_TEAM = 2BMWPNJ962;
 				INFOPLIST_FILE = "Testing image processing/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.Testing-image-processing";

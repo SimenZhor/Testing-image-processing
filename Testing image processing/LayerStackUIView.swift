@@ -10,31 +10,40 @@ import UIKit
 
 class LayerStackUIView: UIView {
     
-    var layers: [UIImageView?] = []
+    var layers: [UIImageViewLayer?] = []
     var currentSelection = 0
+    var backgroundSize: CGSize = CGSize.zero
+    var backgroundTransform: CGAffineTransform = CGAffineTransform()
     
-    func newLayer(_ layer: UIImageView){
+    func newBackgroundLayer(_ layer: UIImageViewLayer){
+        backgroundSize = (layer.image?.size)!
+        newLayer(layer)
+        //TODO: flytt layer til index 0 i stacken hvis det allerede eksisterer layers. Trenger en metode for flytting av layers uansett
         
-        layer.frame = aspectResize(layer.image!, size: CGRect(x: 0, y: 0, width: self.frame.width, height: self.frame.height))
+    }
+    
+    func newLayer(_ layer: UIImageViewLayer){
+        
+        //layer.frame = aspectResize(layer.image!, size: CGRect(x: 0, y: 0, width: self.frame.width, height: self.frame.height))
         let size = layer.frame.size
+        
+        
         layer.frame.origin.x = (self.bounds.midX - (size.width*0.5))
         layer.frame.origin.y = (self.bounds.midY - (size.height*0.5))
+        
         
         layers.append(layer)
         deselector(currentSelection)
         currentSelection = layers.count - 1
         selector(currentSelection)
         self.addSubview(layer)
-        
-        
-        
     }
     
     func count() -> Int{
         return layers.count
     }
     
-    func getLayer(_ index: Int) ->UIImageView{
+    func getLayer(_ index: Int) ->UIImageViewLayer{
         deselector(currentSelection)
         selector(index)
         currentSelection = index
@@ -54,7 +63,7 @@ class LayerStackUIView: UIView {
         }
         let subViews = self.subviews
         for subview in subViews{
-            if subview is UIImageView{
+            if subview is UIImageViewLayer{
                 subview.removeFromSuperview()
             }
         }
@@ -65,13 +74,13 @@ class LayerStackUIView: UIView {
     }
     
     fileprivate func deselector(_ index: Int){
-        if layers.count > 0 && index > 0 && index < layers.count{
+        if layers.count > 0 && index >= 0 && index < layers.count{
             layers[index]?.layer.borderColor = UIColor(red: 0, green: 0, blue: 0, alpha: 000).cgColor
             layers[index]?.layer.borderWidth = 0.0
         }
     }
     fileprivate func selector(_ index: Int){
-        if layers.count > 0 && index > 0 && index < layers.count{
+        if layers.count > 0 && index >= 0 && index < layers.count{
             layers[index]?.layer.borderColor = UIColor(red: 255, green: 0, blue: 0, alpha: 100).cgColor
             layers[index]?.layer.borderWidth = 2.0
         }
