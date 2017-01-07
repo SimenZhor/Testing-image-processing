@@ -12,7 +12,8 @@ class UIImageViewLayer: UIImageView {
 
     //Bonus Properties:
     var totalRotation:CGFloat = 0
-    var totalScale:CGFloat = 0
-    var absOrigin:CGPoint = CGPoint.zero
+    var totalScaleX:CGFloat = 1
+    var totalScaleY:CGFloat = 1
+    //var absOrigin:CGPoint = CGPoint.zero
     
 }

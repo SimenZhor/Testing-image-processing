@@ -13,7 +13,11 @@ class LayerStackUIView: UIView {
     var layers: [UIImageViewLayer?] = []
     var currentSelection = 0
     var backgroundSize: CGSize = CGSize.zero
+    var backgroundTotalScaleX: CGFloat = 1
+    var backgroundTotalScaleY: CGFloat = 1
+    var backgroundTotalRotation: CGFloat = 0
     var backgroundTransform: CGAffineTransform = CGAffineTransform()
+    var backgroundOrigin: CGPoint = CGPoint.zero
     
     func newBackgroundLayer(_ layer: UIImageViewLayer){
         backgroundSize = (layer.image?.size)!
@@ -30,7 +34,6 @@ class LayerStackUIView: UIView {
         
         layer.frame.origin.x = (self.bounds.midX - (size.width*0.5))
         layer.frame.origin.y = (self.bounds.midY - (size.height*0.5))
-        
         
         layers.append(layer)
         deselector(currentSelection)

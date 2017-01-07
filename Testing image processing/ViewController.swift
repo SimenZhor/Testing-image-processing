@@ -11,7 +11,7 @@ import AVFoundation
 import CoreImage
 
 class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIGestureRecognizerDelegate {
-
+    
     @IBOutlet var pan: UIPanGestureRecognizer!
     @IBOutlet var zoom: UIPinchGestureRecognizer!
     @IBOutlet var rotate: UIRotationGestureRecognizer!
@@ -36,23 +36,26 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         
         imagePicker.delegate = self
     }
-
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
-
+    
     //MARK: Actions
-
-
+    
+    
     @IBAction func resizeAction(_ sender: UIPinchGestureRecognizer) {
         currentLayer = layerStack.currentSelection
         let layer = layerStack.layers[currentLayer]
         layer?.transform = (layer?.transform.scaledBy(x: sender.scale, y: sender.scale))!
+        layer?.totalScaleX *= sender.scale
+        layer?.totalScaleY *= sender.scale
+        
         //print("resized to a scale of: ",sender.scale)
         sender.scale = 1
     }
- 
+    
     
     @IBAction func rotate(_ sender: UIRotationGestureRecognizer) {
         currentLayer = layerStack.currentSelection
@@ -69,16 +72,16 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         let layer = layerStack.layers[currentLayer]
         let translation = sender.translation(in: self.view)
         layer?.center = CGPoint(x:(layer?.center.x)! + translation.x,
-                                  y:(layer?.center.y)! + translation.y)
-        layer?.absOrigin.x += translation.x
-        layer?.absOrigin.y += translation.y
+                                y:(layer?.center.y)! + translation.y)
+        //layer?.absOrigin.x += translation.x
+        //layer?.absOrigin.y += translation.y
         sender.setTranslation(CGPoint.zero, in: self.view)
     }
     
     @IBAction func newLayer(_ sender: UIButton) {
         imagePicker.allowsEditing = false
         imagePicker.sourceType = .photoLibrary
-
+        
         self.present(imagePicker, animated: true, completion: nil)
     }
     
@@ -115,6 +118,10 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         let imv = UIImageViewLayer(image: img)
         imv.contentMode = .scaleAspectFit
         layerStack.newLayer(imv)
+        layerStack.layers[0]?.transform = layerStack.backgroundTransform //overføring til den nye viewen
+        layerStack.layers[0]?.totalScaleX = layerStack.backgroundTotalScaleX //overføring til den nye viewen (unødvendig uten transformen som også gjøres
+        layerStack.layers[0]?.totalScaleY = layerStack.backgroundTotalScaleY //overføring til den nye viewen (unødvendig uten transformen som også gjøres
+        layerStack.layers[0]?.totalRotation = layerStack.backgroundTotalRotation //overføring til den nye viewen (unødvendig uten transformen som også gjøres
     }
     
     @IBAction func newTextLayer(_ sender: UIButton) {
@@ -122,7 +129,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     
     
     //MARK: Image Processing
-
+    
     func merge(_ bg: UIImage, overlay: UIImage){
         let size = bg.size
         UIGraphicsBeginImageContext(size)
@@ -142,15 +149,43 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         //prepare each layer:
         var merge: UIImage!
         layerStack.prepareForMerge()
+        if layerStack.layers.count == 0{
+            return merge
+        }else if layerStack.layers.count == 1 {
+            return layerStack.layers[0]!.image!
+        }
         
-        //let backgroundImageSize = layerStack.backgroundSize
-        let contextElm = layerStack
-        let contextSize = contextElm.frame.size
-        let contextOrigin = CGPoint.zero // midlertidig (0,0) fordi layerstack også er superview til layers, så de er relative til hverandre allerede. skal egentlig være: contextElm.frame.origin
+        //klargjør konteksten:
+        let contextElm = layerStack.layers[0]!
+        let contextSize = contextElm.image!.size
+        let contextOrigin = layerStack.convert(contextElm.bounds.origin, from: contextElm)  //CGPoint.zero // midlertidig (0,0) fordi layerstack også er superview til layers, så de er relative til hverandre allerede. skal egentlig være: contextElm.frame.origin
+        //let contextScaleReference = contextElm.frame.size
         UIGraphicsBeginImageContextWithOptions(contextSize, false, 1);
         let context = UIGraphicsGetCurrentContext()!
-
-        for i in 0...(layerStack.count()-1){ //imageView: UIImageViewLayer! in layerStack.layers{
+        
+        //Behandler background layer
+        layerStack.backgroundOrigin = contextOrigin //skal brukes på UIImageView når metoden er ferdig
+        layerStack.backgroundTransform = contextElm.transform //skal brukes på UIImageView når metoden er ferdig
+        layerStack.backgroundTotalScaleX = contextElm.totalScaleX //skal brukes på resterende layers
+        layerStack.backgroundTotalScaleY = contextElm.totalScaleY //skal brukes på resterende layers
+        layerStack.backgroundTotalRotation = contextElm.totalRotation //skal brukes på resterende layers
+        
+        print("\n backgroundTotalScaleX: \(layerStack.backgroundTotalScaleX)")
+        print("backgroundTotalScaleY: \(layerStack.backgroundTotalScaleY)\n")
+        
+        let backgroundRect = CGRect(origin: CGPoint.zero, size: contextSize)
+        let backgroundImage = contextElm.image!
+        backgroundImage.draw(in: backgroundRect)
+        
+        //klargjør matriser og skaleringer
+        var matrix = CGAffineTransform()
+        var backgroundRescaleMatrix = CGAffineTransform()
+        var rotationFlipBackMatrix = CGAffineTransform()
+        let xScale = layerStack.backgroundTotalScaleX //contextSize.width/contextScaleReference.width
+        let yScale = layerStack.backgroundTotalScaleY //contextSize.height/contextScaleReference.height
+        
+        //behandler resterende layers:
+        for i in 1...(layerStack.count()-1){ //imageView: UIImageViewLayer! in layerStack.layers{
             
             //Save graphics state
             context.saveGState()
@@ -159,36 +194,47 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
             let image = CIImage(image: imageView.image!)!
             
             //Finner center-plasseringen til det manipulerte bildet i forhold til context
-            //print ("context origin: \(contextOrigin)")
-            //print ("frame origin: \(imageView.frame.origin)")
-            //print ("frame center: \(imageView.center)")
-            //print ("relative center: (\(imageView.center.x - contextOrigin.x),\(imageView.center.y - contextOrigin.y))\n")
-            let relativeCenterX = imageView.center.x - contextOrigin.x
-            let relativeCenterY = imageView.center.y - contextOrigin.y
+            let backgroundRotationMatrix = CGAffineTransform.init(rotationAngle: layerStack.backgroundTotalRotation)
+            let relativeCenterX = (imageView.center.x - contextOrigin.x)/xScale  ///layerStack.backgroundTotalScaleX
+            let relativeCenterY = (imageView.center.y - contextOrigin.y)/yScale  ///layerStack.backgroundTotalScaleY
+            var relCenter = CGPoint(x: relativeCenterX, y: relativeCenterY)
             
-            let rotationFlipBackMatrix = CGAffineTransform.init(rotationAngle: imageView.totalRotation*2) //transformen i imageview har motsatt koordinatsystem på rotasjonen, så den gjøres feil vei. Retter det opp med denne.
-            let matrix = imageView.transform.concatenating(rotationFlipBackMatrix)
-
             
+            
+            rotationFlipBackMatrix = CGAffineTransform.init(rotationAngle: imageView.totalRotation*2 - layerStack.backgroundTotalRotation) //transformen i imageview har motsatt koordinatsystem på rotasjonen, så den gjøres feil vei. Retter det opp med denne. Legger også til bakgrunnens rotasjon for å motvirke eventuelle rotasjoner gjort på den.
+            backgroundRescaleMatrix = CGAffineTransform.init(scaleX: 1/xScale, y: 1/yScale) //skaleringen her skal være lik skaleringen som blir gjort på bakgrunnen når denne tegnes i konteksten og ikke blir tilført affine-avbildningen
+            print("xscale: \(xScale)")
+            print("1/xscale: \(1/xScale)")
+                
+            matrix = imageView.transform.concatenating(backgroundRescaleMatrix)
+            matrix = matrix.concatenating(rotationFlipBackMatrix)
             //let cicontext = CIContext()
             let tempFilter = CIFilter(name: "CIAffineTransform",
-                                      withInputParameters: [kCIInputImageKey: image, kCIInputTransformKey: matrix])
+                                          withInputParameters: [kCIInputImageKey: image, kCIInputTransformKey: matrix])
             let filterResult = UIImage(ciImage: ((tempFilter?.outputImage)! as CIImage))
-            
+                
             //jobber oss til hjørnet av det transformerte bildet ut ifra det center-punktet vi fant i forhold til context
-            let drawOrigin = CGPoint(x: (relativeCenterX - filterResult.size.width*0.5), y: (relativeCenterY - filterResult.size.height*0.5))
+            relCenter = relCenter.applying(backgroundRotationMatrix)
+            print(layerStack.backgroundTotalRotation)
+            print("\n\nimageview.center: \(imageView.center)")
+            print("contextOrigin: \(contextOrigin)")
+            print("relative center (scaled and rotated)\(relCenter)")
             
-            print("\n\n Layer index: \(i) \n\n")
-            print("UIimage size: \(imageView.image!.size)")
-            print("CIimage extent: \(image.extent)")
-            print("imageview frame size: \(imageView.frame.size)")
+            let drawOrigin = CGPoint(x: (relCenter.x - filterResult.size.width*0.5), y: (relCenter.y - filterResult.size.height*0.5))
+            //let drawOrigin = CGPoint(x: (relativeCenterX - filterResult.size.width*0.5), y: (relativeCenterY - filterResult.size.height*0.5))
+                
+            //print("\n\n Layer index: \(i) \n\n")
+            //print("UIimage size: \(imageView.image!.size)")
+            //print("imageview frame size: \(imageView.frame.size)")
             print("Filter result size: \(filterResult.size)")
+            
+            
             print("draw origin: \(drawOrigin)\n")
-            
+                
             let drawingRect : CGRect = CGRect(origin: drawOrigin, size: filterResult.size)
-            
+                
             filterResult.draw(in: drawingRect)
-            
+       
             //Restore graphics state
             context.restoreGState()
         }
@@ -231,8 +277,8 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     
     //MARK: Imagepicker methods
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String: Any]){
-        if let pickedImage = info[UIImagePickerControllerOriginalImage] as? UIImage{
-            
+        if var pickedImage = info[UIImagePickerControllerOriginalImage] as? UIImage{
+            pickedImage = pickedImage.fixOrientation()
             let imv = UIImageViewLayer(image: pickedImage)
             imv.contentMode = .scaleAspectFit
             if(layerStack.count() > 0){
@@ -253,8 +299,68 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     //MARK: Gesture delegates
     
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer,
-        shouldRecognizeSimultaneouslyWith shouldRecognizeSimultaneouslyWithGestureRecognizer:UIGestureRecognizer) -> Bool {
+                           shouldRecognizeSimultaneouslyWith shouldRecognizeSimultaneouslyWithGestureRecognizer:UIGestureRecognizer) -> Bool {
         return true
     }
 }
 
+extension UIImage {
+    
+    func fixOrientation() -> UIImage {
+        
+        // No-op if the orientation is already correct
+        if ( self.imageOrientation == UIImageOrientation.up ) {
+            return self;
+        }
+        
+        // We need to calculate the proper transformation to make the image upright.
+        // We do it in 2 steps: Rotate if Left/Right/Down, and then flip if Mirrored.
+        var transform: CGAffineTransform = CGAffineTransform.identity
+        
+        if ( self.imageOrientation == UIImageOrientation.down || self.imageOrientation == UIImageOrientation.downMirrored ) {
+            transform = transform.translatedBy(x: self.size.width, y: self.size.height)
+            transform = transform.rotated(by: CGFloat(M_PI))
+        }
+        
+        if ( self.imageOrientation == UIImageOrientation.left || self.imageOrientation == UIImageOrientation.leftMirrored ) {
+            transform = transform.translatedBy(x: self.size.width, y: 0)
+            transform = transform.rotated(by: CGFloat(M_PI_2))
+        }
+        
+        if ( self.imageOrientation == UIImageOrientation.right || self.imageOrientation == UIImageOrientation.rightMirrored ) {
+            transform = transform.translatedBy(x: 0, y: self.size.height);
+            transform = transform.rotated(by: CGFloat(-M_PI_2));
+        }
+        
+        if ( self.imageOrientation == UIImageOrientation.upMirrored || self.imageOrientation == UIImageOrientation.downMirrored ) {
+            transform = transform.translatedBy(x: self.size.width, y: 0)
+            transform = transform.scaledBy(x: -1, y: 1)
+        }
+        
+        if ( self.imageOrientation == UIImageOrientation.leftMirrored || self.imageOrientation == UIImageOrientation.rightMirrored ) {
+            transform = transform.translatedBy(x: self.size.height, y: 0);
+            transform = transform.scaledBy(x: -1, y: 1);
+        }
+        
+        // Now we draw the underlying CGImage into a new context, applying the transform
+        // calculated above.
+        let ctx: CGContext = CGContext(data: nil, width: Int(self.size.width), height: Int(self.size.height),
+                                       bitsPerComponent: self.cgImage!.bitsPerComponent, bytesPerRow: 0,
+                                       space: self.cgImage!.colorSpace!,
+                                       bitmapInfo: self.cgImage!.bitmapInfo.rawValue)!;
+        
+        ctx.concatenate(transform)
+        
+        if ( self.imageOrientation == UIImageOrientation.left ||
+            self.imageOrientation == UIImageOrientation.leftMirrored ||
+            self.imageOrientation == UIImageOrientation.right ||
+            self.imageOrientation == UIImageOrientation.rightMirrored ) {
+            ctx.draw(self.cgImage!, in: CGRect(x: 0,y: 0,width: self.size.height,height: self.size.width))
+        } else {
+            ctx.draw(self.cgImage!, in: CGRect(x: 0,y: 0,width: self.size.width,height: self.size.height))
+        }
+        
+        // And now we just create a new UIImage from the drawing context and return it
+        return UIImage(cgImage: ctx.makeImage()!)
+    }
+}
