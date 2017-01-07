@@ -119,9 +119,9 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         imv.contentMode = .scaleAspectFit
         layerStack.newLayer(imv)
         layerStack.layers[0]?.transform = layerStack.backgroundTransform //overføring til den nye viewen
-        layerStack.layers[0]?.totalScaleX = layerStack.backgroundTotalScaleX //overføring til den nye viewen (unødvendig uten transformen som også gjøres
-        layerStack.layers[0]?.totalScaleY = layerStack.backgroundTotalScaleY //overføring til den nye viewen (unødvendig uten transformen som også gjøres
-        layerStack.layers[0]?.totalRotation = layerStack.backgroundTotalRotation //overføring til den nye viewen (unødvendig uten transformen som også gjøres
+        layerStack.layers[0]?.totalScaleX = layerStack.backgroundTotalScaleX //(unødvendig uten transformen som også gjøres
+        layerStack.layers[0]?.totalScaleY = layerStack.backgroundTotalScaleY //(unødvendig uten transformen som også gjøres
+        layerStack.layers[0]?.totalRotation = layerStack.backgroundTotalRotation //(unødvendig uten transformen som også gjøres
     }
     
     @IBAction func newTextLayer(_ sender: UIButton) {
@@ -187,56 +187,35 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         //behandler resterende layers:
         for i in 1...(layerStack.count()-1){ //imageView: UIImageViewLayer! in layerStack.layers{
             
-            //Save graphics state
-            context.saveGState()
-            
             let imageView = (layerStack.layers[i] as  UIImageViewLayer!)!
             let image = CIImage(image: imageView.image!)!
             
             //Finner center-plasseringen til det manipulerte bildet i forhold til context
             let backgroundRotationMatrix = CGAffineTransform.init(rotationAngle: layerStack.backgroundTotalRotation)
-            let relativeCenterX = (imageView.center.x - contextOrigin.x)/xScale  ///layerStack.backgroundTotalScaleX
-            let relativeCenterY = (imageView.center.y - contextOrigin.y)/yScale  ///layerStack.backgroundTotalScaleY
+            let relativeCenterX = (imageView.center.x - contextOrigin.x)/xScale
+            let relativeCenterY = (imageView.center.y - contextOrigin.y)/yScale
             var relCenter = CGPoint(x: relativeCenterX, y: relativeCenterY)
+            relCenter = relCenter.applying(backgroundRotationMatrix)
             
             
+            rotationFlipBackMatrix = CGAffineTransform.init(rotationAngle: imageView.totalRotation*2 - layerStack.backgroundTotalRotation) //NOTAT: transformen i imageview har motsatt koordinatsystem på rotasjonen, så den gjøres feil vei. Retter det opp med denne. Legger også til bakgrunnens rotasjon for å motvirke eventuelle rotasjoner gjort på den.
+            backgroundRescaleMatrix = CGAffineTransform.init(scaleX: 1/xScale, y: 1/yScale) //NOTAT: skaleringen her skal være lik skaleringen som blir gjort på bakgrunnen når denne tegnes i konteksten og ikke blir tilført affine-avbildningen
             
-            rotationFlipBackMatrix = CGAffineTransform.init(rotationAngle: imageView.totalRotation*2 - layerStack.backgroundTotalRotation) //transformen i imageview har motsatt koordinatsystem på rotasjonen, så den gjøres feil vei. Retter det opp med denne. Legger også til bakgrunnens rotasjon for å motvirke eventuelle rotasjoner gjort på den.
-            backgroundRescaleMatrix = CGAffineTransform.init(scaleX: 1/xScale, y: 1/yScale) //skaleringen her skal være lik skaleringen som blir gjort på bakgrunnen når denne tegnes i konteksten og ikke blir tilført affine-avbildningen
-            print("xscale: \(xScale)")
-            print("1/xscale: \(1/xScale)")
                 
             matrix = imageView.transform.concatenating(backgroundRescaleMatrix)
             matrix = matrix.concatenating(rotationFlipBackMatrix)
-            //let cicontext = CIContext()
+
             let tempFilter = CIFilter(name: "CIAffineTransform",
                                           withInputParameters: [kCIInputImageKey: image, kCIInputTransformKey: matrix])
             let filterResult = UIImage(ciImage: ((tempFilter?.outputImage)! as CIImage))
-                
-            //jobber oss til hjørnet av det transformerte bildet ut ifra det center-punktet vi fant i forhold til context
-            relCenter = relCenter.applying(backgroundRotationMatrix)
-            print(layerStack.backgroundTotalRotation)
-            print("\n\nimageview.center: \(imageView.center)")
-            print("contextOrigin: \(contextOrigin)")
-            print("relative center (scaled and rotated)\(relCenter)")
             
+            //Prepare for draw to context:
             let drawOrigin = CGPoint(x: (relCenter.x - filterResult.size.width*0.5), y: (relCenter.y - filterResult.size.height*0.5))
-            //let drawOrigin = CGPoint(x: (relativeCenterX - filterResult.size.width*0.5), y: (relativeCenterY - filterResult.size.height*0.5))
-                
-            //print("\n\n Layer index: \(i) \n\n")
-            //print("UIimage size: \(imageView.image!.size)")
-            //print("imageview frame size: \(imageView.frame.size)")
-            print("Filter result size: \(filterResult.size)")
-            
-            
-            print("draw origin: \(drawOrigin)\n")
-                
             let drawingRect : CGRect = CGRect(origin: drawOrigin, size: filterResult.size)
-                
+            
+            //Draw to context:
             filterResult.draw(in: drawingRect)
-       
-            //Restore graphics state
-            context.restoreGState()
+
         }
         merge = UIGraphicsGetImageFromCurrentImageContext()
         UIGraphicsEndImageContext()

@@ -18,6 +18,7 @@ class LayerStackUIView: UIView {
     var backgroundTotalRotation: CGFloat = 0
     var backgroundTransform: CGAffineTransform = CGAffineTransform()
     var backgroundOrigin: CGPoint = CGPoint.zero
+
     
     func newBackgroundLayer(_ layer: UIImageViewLayer){
         backgroundSize = (layer.image?.size)!
