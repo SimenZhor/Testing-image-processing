@@ -10,16 +10,16 @@ import UIKit
 import AVFoundation
 import CoreImage
 
-class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIGestureRecognizerDelegate {
+class EditorViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIGestureRecognizerDelegate {
     
     @IBOutlet var pan: UIPanGestureRecognizer!
     @IBOutlet var zoom: UIPinchGestureRecognizer!
     @IBOutlet var rotate: UIRotationGestureRecognizer!
-    @IBOutlet weak var newLayerButton: NSLayoutConstraint!
-    @IBOutlet weak var nextLayerButton: UIButton!
-    @IBOutlet weak var prevLayerButton: UIButton!
+    @IBOutlet weak var newLayerButton: UIBarButtonItem!
+    @IBOutlet weak var nextLayerButton: UIBarButtonItem!
+    @IBOutlet weak var prevLayerButton: UIBarButtonItem!
     @IBOutlet weak var layerStack: LayerStackUIView!
-    @IBOutlet weak var doneButton: UIButton!
+    @IBOutlet weak var doneButton: UIBarButtonItem!
     @IBOutlet weak var textButton: UIButton!
     
     let imagePicker = UIImagePickerController()
@@ -29,12 +29,20 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     var tempoverlay: UIImage!
     var currentLayer = 0
     
+    override func viewWillAppear(_ animated: Bool) {
+        self.navigationController?.isNavigationBarHidden = true
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         zoom.isEnabled = true
         
         imagePicker.delegate = self
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        self.navigationController?.isNavigationBarHidden = false
     }
     
     override func didReceiveMemoryWarning() {
@@ -78,14 +86,14 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         sender.setTranslation(CGPoint.zero, in: self.view)
     }
     
-    @IBAction func newLayer(_ sender: UIButton) {
+    @IBAction func newLayer(_ sender: UIBarButtonItem) {
         imagePicker.allowsEditing = false
         imagePicker.sourceType = .photoLibrary
         
         self.present(imagePicker, animated: true, completion: nil)
     }
     
-    @IBAction func nextLayer(_ sender: UIButton) {
+    @IBAction func nextLayer(_ sender: UIBarButtonItem) {
         currentLayer = layerStack.currentSelection
         if (currentLayer+1) < layerStack.count(){
             layerStack.getLayer(layerStack.currentSelection+1)
@@ -99,7 +107,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         }
     }
     
-    @IBAction func prevLayer(_ sender: UIButton) {
+    @IBAction func prevLayer(_ sender: UIBarButtonItem) {
         currentLayer = layerStack.currentSelection
         if (currentLayer-1) >= 0{
             layerStack.getLayer(layerStack.currentSelection-1)
@@ -112,16 +120,18 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         }
     }
     
-    @IBAction func done(_ sender: UIButton) {
-        let img = merge2(layerStack)
-        layerStack.clearScreen()
-        let imv = UIImageViewLayer(image: img)
-        imv.contentMode = .scaleAspectFit
-        layerStack.newLayer(imv)
-        layerStack.layers[0]?.transform = layerStack.backgroundTransform //overføring til den nye viewen
-        layerStack.layers[0]?.totalScaleX = layerStack.backgroundTotalScaleX //(unødvendig uten transformen som også gjøres
-        layerStack.layers[0]?.totalScaleY = layerStack.backgroundTotalScaleY //(unødvendig uten transformen som også gjøres
-        layerStack.layers[0]?.totalRotation = layerStack.backgroundTotalRotation //(unødvendig uten transformen som også gjøres
+    @IBAction func done(_ sender: UIBarButtonItem) {
+        if layerStack.layers.count > 0{
+            let img = merge2(layerStack)
+            layerStack.clearScreen()
+            let imv = UIImageViewLayer(image: img)
+            imv.contentMode = .scaleAspectFit
+            layerStack.newLayer(imv)
+            layerStack.layers[0]?.transform = layerStack.backgroundTransform //overføring til den nye viewen
+            layerStack.layers[0]?.totalScaleX = layerStack.backgroundTotalScaleX //(unødvendig uten transformen som også gjøres
+            layerStack.layers[0]?.totalScaleY = layerStack.backgroundTotalScaleY //(unødvendig uten transformen som også gjøres
+            layerStack.layers[0]?.totalRotation = layerStack.backgroundTotalRotation //(unødvendig uten transformen som også gjøres
+        }
     }
     
     @IBAction func newTextLayer(_ sender: UIButton) {
@@ -149,19 +159,11 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         //prepare each layer:
         var merge: UIImage!
         layerStack.prepareForMerge()
-        if layerStack.layers.count == 0{
-            return merge
-        }else if layerStack.layers.count == 1 {
-            return layerStack.layers[0]!.image!
-        }
         
         //klargjør konteksten:
         let contextElm = layerStack.layers[0]!
         let contextSize = contextElm.image!.size
         let contextOrigin = layerStack.convert(contextElm.bounds.origin, from: contextElm)  //CGPoint.zero // midlertidig (0,0) fordi layerstack også er superview til layers, så de er relative til hverandre allerede. skal egentlig være: contextElm.frame.origin
-        //let contextScaleReference = contextElm.frame.size
-        UIGraphicsBeginImageContextWithOptions(contextSize, false, 1);
-        let context = UIGraphicsGetCurrentContext()!
         
         //Behandler background layer
         layerStack.backgroundOrigin = contextOrigin //skal brukes på UIImageView når metoden er ferdig
@@ -170,8 +172,12 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         layerStack.backgroundTotalScaleY = contextElm.totalScaleY //skal brukes på resterende layers
         layerStack.backgroundTotalRotation = contextElm.totalRotation //skal brukes på resterende layers
         
-        print("\n backgroundTotalScaleX: \(layerStack.backgroundTotalScaleX)")
-        print("backgroundTotalScaleY: \(layerStack.backgroundTotalScaleY)\n")
+        if layerStack.layers.count == 1 {
+            return layerStack.layers[0]!.image!
+        }
+        
+        UIGraphicsBeginImageContextWithOptions(contextSize, false, 1);
+        //let context = UIGraphicsGetCurrentContext()!
         
         let backgroundRect = CGRect(origin: CGPoint.zero, size: contextSize)
         let backgroundImage = contextElm.image!
@@ -281,6 +287,13 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
                            shouldRecognizeSimultaneouslyWith shouldRecognizeSimultaneouslyWithGestureRecognizer:UIGestureRecognizer) -> Bool {
         return true
     }
+    
+    //MARK:Navigation
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        
+    }
+ 
+    
 }
 
 extension UIImage {
