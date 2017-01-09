@@ -16,29 +16,51 @@ class UIImageViewLayer: UIImageView {
     var totalScaleY:CGFloat = 1
     //var absOrigin:CGPoint = CGPoint.zero
     
-    func scaleToScreen(screenSize: CGSize){
-        if let imageSize = self.image?.size{
-            //let screenSize = self.superview!.frame.size //UIScreen.main.bounds.size
-            
-            if imageSize.width > screenSize.width || imageSize.height > screenSize.height{
-                //Image exceeds screen in at least one direction
-                var scale: CGFloat = 1
-                let imageRatio = (imageSize.width)/(imageSize.height)
-        
-                if imageRatio >= 1{
-                    //landscape picture
-                    scale = screenSize.width/imageSize.width
-                }else{
-                    //portrait picture
-                    scale = screenSize.height/imageSize.height
+    func scaleAndCenterInParent(){
+        //Scales and centers to superview, to set superview use function: "scaleCenterAndSetParent(to: UIView)"
+        if let screenSize = superview?.frame.size{
+            if let imageSize = self.image?.size{
+                self.contentMode = .scaleAspectFit
+                
+                if imageSize.width > screenSize.width || imageSize.height > screenSize.height{
+                    //Image exceeds screen in at least one direction
+                    var scale: CGFloat = 1
+                    let imageRatio = (imageSize.width)/(imageSize.height)
+                    
+                    if imageRatio >= 1{
+                        //landscape picture
+                        scale = screenSize.width/imageSize.width
+                    }else{
+                        //portrait picture
+                        scale = screenSize.height/imageSize.height
+                    }
+                    
+                    //apply transform to self (imageview)
+                    self.scale(xScale: scale, yScale: scale, border: false)
+                    
                 }
                 
-                //apply transform to self (imageview)
-                self.transform = self.transform.scaledBy(x: scale, y: scale)
-                totalScaleX *= scale
-                totalScaleY *= scale
-                
+                //center
+                let size = self.frame.size
+                self.frame.origin.x = (superview!.bounds.midX - (size.width*0.5))
+                self.frame.origin.y = (superview!.bounds.midY - (size.height*0.5))
             }
         }
+    }
+    
+    func scaleCenterAndSetParent(to: UIView){
+        to.addSubview(self)
+        self.scaleAndCenterInParent()
+    }
+    
+    func scale(xScale: CGFloat, yScale: CGFloat, border: Bool){
+      
+        self.transform = self.transform.scaledBy(x: xScale, y: yScale)
+        self.totalScaleX *= xScale
+        self.totalScaleY *= yScale
+        if border{
+            self.layer.borderWidth = 1.0/self.totalScaleX
+        }
+        
     }
 }

@@ -21,16 +21,9 @@ class RenderViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         self.navigationController?.isNavigationBarHidden = true
         
+        
         let imv = UIImageViewLayer(image: img)
-        imv.contentMode = .scaleAspectFit
-        imv.scaleToScreen(screenSize: canvasUIView.frame.size)
-        
-        //center
-        let size = imv.frame.size
-        imv.frame.origin.x = (canvasUIView.bounds.midX - (size.width*0.5))
-        imv.frame.origin.y = (canvasUIView.bounds.midY - (size.height*0.5))
-        
-        canvasUIView.addSubview(imv)
+        imv.scaleCenterAndSetParent(to: canvasUIView)
     }
     
     override func viewDidLoad() {
@@ -86,7 +79,7 @@ class RenderViewController: UIViewController {
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         let editorScene = segue.destination as! EditorViewController
-        //endre variabler i editorScene hvis nødvendig
+        editorScene.layerStack.mergeCompleted()
         
     }
     

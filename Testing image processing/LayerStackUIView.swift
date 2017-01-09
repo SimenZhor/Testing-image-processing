@@ -10,7 +10,7 @@ import UIKit
 
 class LayerStackUIView: UIView {
     
-    var layers: [UIImageViewLayer?] = []
+    var layers: LinkedList<UIImageViewLayer> = LinkedList<UIImageViewLayer>()
     var currentSelection = 0
     var backgroundSize: CGSize = CGSize.zero
     var backgroundTotalScaleX: CGFloat = 1
@@ -28,22 +28,16 @@ class LayerStackUIView: UIView {
     }
     
     func newLayer(_ layer: UIImageViewLayer){
-        
-        layer.scaleToScreen(screenSize: self.frame.size)
-        
-        //center
-        let size = layer.frame.size
-        layer.frame.origin.x = (self.bounds.midX - (size.width*0.5))
-        layer.frame.origin.y = (self.bounds.midY - (size.height*0.5))
-        
         layers.append(layer)
+        layer.scaleCenterAndSetParent(to: self)
+
+        
         deselector(currentSelection)
         currentSelection = layers.count - 1
         selector(currentSelection)
-        self.addSubview(layer)
     }
     
-    func count() -> Int{
+    public var count: Int{
         return layers.count
     }
     
@@ -51,13 +45,15 @@ class LayerStackUIView: UIView {
         deselector(currentSelection)
         selector(index)
         currentSelection = index
-        return layers[index]!
+        return layers[index]
     }
     
     func removeLayer(_ index: Int){
-        layers.remove(at: index)
-        if layers.count>1{
+        _ = layers.remove(atIndex: index)
+        if layers.count>index{
             selector(index)
+        }else{
+            selector(index-1)
         }
     }
     
@@ -65,8 +61,8 @@ class LayerStackUIView: UIView {
         for _ in(0..<layers.count){
             removeLayer(0)
         }
-        let subViews = self.subviews
-        for subview in subViews{
+        
+        for subview in self.subviews{
             if subview is UIImageViewLayer{
                 subview.removeFromSuperview()
             }
@@ -77,26 +73,20 @@ class LayerStackUIView: UIView {
         deselector(currentSelection)
     }
     
+    func mergeCompleted(){
+        selector(currentSelection)
+    }
+    
     fileprivate func deselector(_ index: Int){
         if layers.count > 0 && index >= 0 && index < layers.count{
-            layers[index]?.layer.borderColor = UIColor(red: 0, green: 0, blue: 0, alpha: 000).cgColor
-            layers[index]?.layer.borderWidth = 0.0
+            layers[index].layer.borderColor = UIColor(red: 0, green: 0, blue: 0, alpha: 000).cgColor
+            layers[index].layer.borderWidth = 0.0
         }
     }
     fileprivate func selector(_ index: Int){
         if layers.count > 0 && index >= 0 && index < layers.count{
-            layers[index]?.layer.borderColor = UIColor(red: 255, green: 0, blue: 0, alpha: 100).cgColor
-            layers[index]?.layer.borderWidth = 1.0/(layers[index]?.totalScaleX)!
-        }
-    }
-    
-    fileprivate func aspectResize(_ image: UIImage, size: CGRect) -> CGRect{
-        let aspect: CGFloat = image.size.width / image.size.height
-        if (size.width / aspect) <= size.height{
-            return CGRect(x:size.origin.x, y:size.origin.y, width: size.width, height: size.width/aspect)
-        }else{
-            //Denne scaler kanskje opp? return size istede?
-            return CGRect(x:size.origin.x, y:size.origin.y, width: size.height * aspect, height: size.height)
+            layers[index].layer.borderColor = UIColor(red: 255, green: 0, blue: 0, alpha: 100).cgColor
+            layers[index].layer.borderWidth = 1.0/layers[index].totalScaleX
         }
     }
     

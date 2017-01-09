@@ -47,7 +47,7 @@ class ViewControllerBackup: UIViewController, UIImagePickerControllerDelegate, U
     @IBAction func resizeAction(_ sender: UIPinchGestureRecognizer) {
         currentLayer = layerStack.currentSelection
         let layer = layerStack.layers[currentLayer]
-        layer?.transform = (layer?.transform.scaledBy(x: sender.scale, y: sender.scale))!
+        layer.transform = layer.transform.scaledBy(x: sender.scale, y: sender.scale)
         //print("resized to a scale of: ",sender.scale)
         sender.scale = 1
     }
@@ -56,7 +56,7 @@ class ViewControllerBackup: UIViewController, UIImagePickerControllerDelegate, U
     @IBAction func rotate(_ sender: UIRotationGestureRecognizer) {
         currentLayer = layerStack.currentSelection
         let layer = layerStack.layers[currentLayer]
-        layer?.transform = (layer?.transform.rotated(by: sender.rotation))!
+        layer.transform = layer.transform.rotated(by: sender.rotation)
         //print("rotated ", sender.rotation," degrees")
         sender.rotation = 0
     }
@@ -65,8 +65,8 @@ class ViewControllerBackup: UIViewController, UIImagePickerControllerDelegate, U
         currentLayer = layerStack.currentSelection
         let layer = layerStack.layers[currentLayer]
         let translation = sender.translation(in: self.view)
-        layer?.center = CGPoint(x:(layer?.center.x)! + translation.x,
-                                y:(layer?.center.y)! + translation.y)
+        layer.center = CGPoint(x:layer.center.x + translation.x,
+                                y:layer.center.y + translation.y)
         
         sender.setTranslation(CGPoint.zero, in: self.view)
     }
@@ -81,27 +81,27 @@ class ViewControllerBackup: UIViewController, UIImagePickerControllerDelegate, U
     @IBAction func nextLayer(_ sender: UIButton) {
         currentLayer = layerStack.currentSelection
         if (currentLayer+1) < layerStack.count(){
-            layerStack.getLayer(layerStack.currentSelection+1)
+            _ = layerStack.getLayer(layerStack.currentSelection+1)
             //print("fra: ",currentLayer," til: ",(currentLayer+1))
         }else if layerStack.count() == 0{
             //print("No layers")
         }
         else{
             //print("går til første")
-            layerStack.getLayer(0)
+            _ = layerStack.getLayer(0)
         }
     }
     
     @IBAction func prevLayer(_ sender: UIButton) {
         currentLayer = layerStack.currentSelection
         if (currentLayer-1) >= 0{
-            layerStack.getLayer(layerStack.currentSelection-1)
+            _ = layerStack.getLayer(layerStack.currentSelection-1)
             //print("fra: ",currentLayer," til: ",(currentLayer-1))
         }else if layerStack.count() == 0{
             //print("No layers")
         }else{
             //print("går til siste")
-            layerStack.getLayer(layerStack.count()-1)
+            _ = layerStack.getLayer(layerStack.count()-1)
         }
     }
     

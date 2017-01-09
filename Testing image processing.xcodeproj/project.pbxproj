@@ -18,8 +18,8 @@
 		F1A07B1A1D2A619600EB6983 /* LayerStackUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1A07B191D2A619600EB6983 /* LayerStackUIView.swift */; };
 		F1A07B1C1D2A662600EB6983 /* Toolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1A07B1B1D2A662600EB6983 /* Toolbar.swift */; };
 		F1B11D2F1E1EF18A00283BFF /* UIImageViewLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1B11D2E1E1EF18A00283BFF /* UIImageViewLayer.swift */; };
-		F1B2F4611E1D217D004A8ABE /* ViewControllerBackup.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1B2F4601E1D217D004A8ABE /* ViewControllerBackup.swift */; };
 		F1C1A5FB1E23934200BF48F7 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F1C1A5F91E23934200BF48F7 /* Main.storyboard */; };
+		F1C1A5FD1E23C8BC00BF48F7 /* LinkedList.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1C1A5FC1E23C8BC00BF48F7 /* LinkedList.swift */; };
 		F1C42E551E2268750016CC7E /* RenderViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1C42E541E2268750016CC7E /* RenderViewController.swift */; };
 /* End PBXBuildFile section */
 
@@ -58,8 +58,8 @@
 		F1A07B191D2A619600EB6983 /* LayerStackUIView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LayerStackUIView.swift; sourceTree = "<group>"; };
 		F1A07B1B1D2A662600EB6983 /* Toolbar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Toolbar.swift; sourceTree = "<group>"; };
 		F1B11D2E1E1EF18A00283BFF /* UIImageViewLayer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIImageViewLayer.swift; sourceTree = "<group>"; };
-		F1B2F4601E1D217D004A8ABE /* ViewControllerBackup.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ViewControllerBackup.swift; path = "Testing image processing/ViewControllerBackup.swift"; sourceTree = "<group>"; };
 		F1C1A5FA1E23934200BF48F7 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		F1C1A5FC1E23C8BC00BF48F7 /* LinkedList.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LinkedList.swift; sourceTree = "<group>"; };
 		F1C42E541E2268750016CC7E /* RenderViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RenderViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -118,7 +118,6 @@
 		F19C43F81D29C14000457630 = {
 			isa = PBXGroup;
 			children = (
-				F1B2F4601E1D217D004A8ABE /* ViewControllerBackup.swift */,
 				F19C44031D29C14100457630 /* Testing image processing */,
 				F19C44181D29C14200457630 /* Testing image processingTests */,
 				F19C44231D29C14200457630 /* Testing image processingUITests */,
@@ -145,6 +144,7 @@
 				F135A4BF1E22EDCD00D974BC /* Views */,
 				F135A4BD1E22EA2A00D974BC /* Custom Segue */,
 				F19C44321D29D71900457630 /* uiimageextension.swift */,
+				F1C1A5FC1E23C8BC00BF48F7 /* LinkedList.swift */,
 				F19C440B1D29C14200457630 /* Assets.xcassets */,
 				F19C440D1D29C14200457630 /* LaunchScreen.storyboard */,
 				F19C44101D29C14200457630 /* Info.plist */,
@@ -309,9 +309,9 @@
 			files = (
 				F135A4BC1E22EA1300D974BC /* ReverseShowSegue.swift in Sources */,
 				F1A07B1A1D2A619600EB6983 /* LayerStackUIView.swift in Sources */,
+				F1C1A5FD1E23C8BC00BF48F7 /* LinkedList.swift in Sources */,
 				F19C44071D29C14200457630 /* EditorViewController.swift in Sources */,
 				F1B11D2F1E1EF18A00283BFF /* UIImageViewLayer.swift in Sources */,
-				F1B2F4611E1D217D004A8ABE /* ViewControllerBackup.swift in Sources */,
 				F1C42E551E2268750016CC7E /* RenderViewController.swift in Sources */,
 				F1A07B1C1D2A662600EB6983 /* Toolbar.swift in Sources */,
 				F19C44331D29D71900457630 /* uiimageextension.swift in Sources */,

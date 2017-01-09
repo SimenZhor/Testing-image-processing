@@ -71,31 +71,15 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Testing image processing/RenderViewController.swift"
-            timestampString = "505652380.842182"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "90"
-            endingLineNumber = "90"
-            landmarkName = "prepare(for:sender:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Testing image processing/RenderViewController.swift"
-            timestampString = "505652380.842182"
+            timestampString = "505666916.408982"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "68"
-            endingLineNumber = "68"
+            startingLineNumber = "61"
+            endingLineNumber = "61"
             landmarkName = "saveAction(_:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -107,12 +91,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Testing image processing/UIImageViewLayer.swift"
-            timestampString = "505656616.280327"
+            timestampString = "505666916.408982"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "22"
-            endingLineNumber = "22"
-            landmarkName = "scaleToScreen(screenSize:)"
+            startingLineNumber = "23"
+            endingLineNumber = "23"
+            landmarkName = "scaleAndCenterInParent()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

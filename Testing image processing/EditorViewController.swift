@@ -55,11 +55,7 @@ class EditorViewController: UIViewController, UIImagePickerControllerDelegate, U
     
     @IBAction func resizeAction(_ sender: UIPinchGestureRecognizer) {
         currentLayer = layerStack.currentSelection
-        let layer = layerStack.layers[currentLayer]
-        layer?.transform = (layer?.transform.scaledBy(x: sender.scale, y: sender.scale))!
-        layer?.totalScaleX *= sender.scale
-        layer?.totalScaleY *= sender.scale
-        layer?.layer.borderWidth = 1.0/(layer?.totalScaleX)!
+        layerStack.layers[currentLayer].scale(xScale: sender.scale, yScale: sender.scale, border: true)
         
         //print("resized to a scale of: ",sender.scale)
         sender.scale = 1
@@ -69,8 +65,8 @@ class EditorViewController: UIViewController, UIImagePickerControllerDelegate, U
     @IBAction func rotate(_ sender: UIRotationGestureRecognizer) {
         currentLayer = layerStack.currentSelection
         let layer = layerStack.layers[currentLayer]
-        layer?.transform = (layer?.transform.rotated(by: sender.rotation))!
-        layer?.totalRotation -= sender.rotation
+        layer.transform = layer.transform.rotated(by: sender.rotation)
+        layer.totalRotation -= sender.rotation
         //sender.velocity kan brukes til å avbryte rotasjonen hvis bevegelsen går fra sakte til fort.
         //print("rotated ", sender.rotation," degrees")
         sender.rotation = 0
@@ -80,8 +76,8 @@ class EditorViewController: UIViewController, UIImagePickerControllerDelegate, U
         currentLayer = layerStack.currentSelection
         let layer = layerStack.layers[currentLayer]
         let translation = sender.translation(in: self.view)
-        layer?.center = CGPoint(x:(layer?.center.x)! + translation.x,
-                                y:(layer?.center.y)! + translation.y)
+        layer.center = CGPoint(x:layer.center.x + translation.x,
+                                y:layer.center.y + translation.y)
         //layer?.absOrigin.x += translation.x
         //layer?.absOrigin.y += translation.y
         sender.setTranslation(CGPoint.zero, in: self.view)
@@ -96,28 +92,28 @@ class EditorViewController: UIViewController, UIImagePickerControllerDelegate, U
     
     @IBAction func nextLayer(_ sender: UIBarButtonItem) {
         currentLayer = layerStack.currentSelection
-        if (currentLayer+1) < layerStack.count(){
-            layerStack.getLayer(layerStack.currentSelection+1)
+        if (currentLayer+1) < layerStack.count{
+            _ = layerStack.getLayer(layerStack.currentSelection+1)
             //print("fra: ",currentLayer," til: ",(currentLayer+1))
-        }else if layerStack.count() == 0{
+        }else if layerStack.count == 0{
             //print("No layers")
         }
         else{
             //print("går til første")
-            layerStack.getLayer(0)
+            _ = layerStack.getLayer(0)
         }
     }
     
     @IBAction func prevLayer(_ sender: UIBarButtonItem) {
         currentLayer = layerStack.currentSelection
         if (currentLayer-1) >= 0{
-            layerStack.getLayer(layerStack.currentSelection-1)
+            _ = layerStack.getLayer(layerStack.currentSelection-1)
             //print("fra: ",currentLayer," til: ",(currentLayer-1))
-        }else if layerStack.count() == 0{
+        }else if layerStack.count == 0{
             //print("No layers")
         }else{
             //print("går til siste")
-            layerStack.getLayer(layerStack.count()-1)
+            _ = layerStack.getLayer(layerStack.count-1)
         }
     }
     
@@ -139,26 +135,20 @@ class EditorViewController: UIViewController, UIImagePickerControllerDelegate, U
     }
     
     @IBAction func newTextLayer(_ sender: UIButton) {
+    
+    }
+    
+    func linkLayers(indexlist: [Int]){
+    
+    }
+
+    func deleteLayer(index: Int){
+        
     }
     
     
     //MARK: Image Processing
     
-    /*
-    func merge2(_ bg: UIImage, overlay: UIImage){
-        let size = bg.size
-        UIGraphicsBeginImageContext(size)
-        
-        let bgSize = CGRect(x: 0, y: 0, width: size.width, height: size.height)
-        let areaSize = CGRect(x: 0, y: 0, width: overlay.size.width, height: overlay.size.height)
-        bg.draw(in: bgSize)
-        
-        overlay.draw(in: areaSize, blendMode: .normal, alpha: 1)
-        
-        merge = UIGraphicsGetImageFromCurrentImageContext()
-        UIGraphicsEndImageContext()
-    }
-    */
     
     func merge(_ layerStack: LayerStackUIView) -> UIImage{
         //prepare each layer:
@@ -166,9 +156,9 @@ class EditorViewController: UIViewController, UIImagePickerControllerDelegate, U
         layerStack.prepareForMerge()
         
         //klargjør konteksten:
-        let contextElm = layerStack.layers[0]!
+        let contextElm = layerStack.layers[0]
         let contextSize = contextElm.image!.size
-        let contextOrigin = layerStack.convert(contextElm.bounds.origin, from: contextElm)  //CGPoint.zero // midlertidig (0,0) fordi layerstack også er superview til layers, så de er relative til hverandre allerede. skal egentlig være: contextElm.frame.origin
+        let contextOrigin = layerStack.convert(contextElm.bounds.origin, from: contextElm)
         
         //Behandler background layer
         layerStack.backgroundOrigin = contextOrigin //skal brukes på UIImageView når metoden er ferdig
@@ -178,11 +168,10 @@ class EditorViewController: UIViewController, UIImagePickerControllerDelegate, U
         layerStack.backgroundTotalRotation = contextElm.totalRotation //skal brukes på resterende layers
         
         if layerStack.layers.count == 1 {
-            return layerStack.layers[0]!.image!
+            return layerStack.layers[0].image!
         }
         
-        UIGraphicsBeginImageContextWithOptions(contextSize, false, 1);
-        //let context = UIGraphicsGetCurrentContext()!
+        UIGraphicsBeginImageContextWithOptions(contextSize, false, 1)
         
         let backgroundRect = CGRect(origin: CGPoint.zero, size: contextSize)
         let backgroundImage = contextElm.image!
@@ -192,11 +181,11 @@ class EditorViewController: UIViewController, UIImagePickerControllerDelegate, U
         var matrix = CGAffineTransform()
         var backgroundRescaleMatrix = CGAffineTransform()
         var rotationFlipBackMatrix = CGAffineTransform()
-        let xScale = layerStack.backgroundTotalScaleX //contextSize.width/contextScaleReference.width
-        let yScale = layerStack.backgroundTotalScaleY //contextSize.height/contextScaleReference.height
+        let xScale = layerStack.backgroundTotalScaleX
+        let yScale = layerStack.backgroundTotalScaleY
         
         //behandler resterende layers:
-        for i in 1...(layerStack.count()-1){ //imageView: UIImageViewLayer! in layerStack.layers{
+        for i in 1...(layerStack.count-1){ //imageView: UIImageViewLayer! in layerStack.layers{
             
             let imageView = (layerStack.layers[i] as  UIImageViewLayer!)!
             let image = CIImage(image: imageView.image!)!
@@ -234,36 +223,6 @@ class EditorViewController: UIViewController, UIImagePickerControllerDelegate, U
         return merge
     }
     
-    //MARK: Image Scaling
-    
-    func scaleToSize(_ image: UIImage, size: CGSize) -> UIImage{
-        UIGraphicsBeginImageContextWithOptions(size, false, 1.0)
-        
-        image.draw(in: CGRect(x: 0, y: 0, width: size.width, height: size.height))
-        
-        let ret = UIGraphicsGetImageFromCurrentImageContext()
-        UIGraphicsEndImageContext()
-        return ret!
-    }
-    
-    func aspectFit(_ image: UIImage, size: CGSize) -> UIImage{
-        let aspect: CGFloat = size.width / size.height
-        if (size.width / aspect) <= size.height{
-            return scaleToSize(image, size: CGSize(width: size.width, height: size.width/aspect))
-        }else{
-            return scaleToSize(image, size: CGSize(width: size.height * aspect, height: size.height))
-        }
-    }
-    
-    func aspectResize(_ image: UIImage, size: CGSize) -> CGSize{
-        let aspect: CGFloat = size.width / size.height
-        if (size.width / aspect) <= size.height{
-            return CGSize(width: size.width, height: size.width/aspect)
-        }else{
-            return CGSize(width: size.height * aspect, height: size.height)
-        }
-    }
-    
     
     //MARK: Imagepicker methods
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String: Any]){
@@ -271,7 +230,7 @@ class EditorViewController: UIViewController, UIImagePickerControllerDelegate, U
             pickedImage = pickedImage.fixOrientation()
             let imv = UIImageViewLayer(image: pickedImage)
             imv.contentMode = .scaleAspectFit
-            if(layerStack.count() > 0){
+            if(layerStack.count > 0){
                 layerStack.newLayer(imv)
             }else{
                 layerStack.newBackgroundLayer(imv)
@@ -303,6 +262,10 @@ class EditorViewController: UIViewController, UIImagePickerControllerDelegate, U
                 }
             }
         }
+    }
+    
+    override func unwind(for unwindSegue: UIStoryboardSegue, towardsViewController subsequentVC: UIViewController) {
+        layerStack.mergeCompleted()
     }
  
     
