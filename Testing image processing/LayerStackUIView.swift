@@ -29,10 +29,10 @@ class LayerStackUIView: UIView {
     
     func newLayer(_ layer: UIImageViewLayer){
         
-        //layer.frame = aspectResize(layer.image!, size: CGRect(x: 0, y: 0, width: self.frame.width, height: self.frame.height))
+        layer.scaleToScreen(screenSize: self.frame.size)
+        
+        //center
         let size = layer.frame.size
-        
-        
         layer.frame.origin.x = (self.bounds.midX - (size.width*0.5))
         layer.frame.origin.y = (self.bounds.midY - (size.height*0.5))
         
@@ -86,7 +86,7 @@ class LayerStackUIView: UIView {
     fileprivate func selector(_ index: Int){
         if layers.count > 0 && index >= 0 && index < layers.count{
             layers[index]?.layer.borderColor = UIColor(red: 255, green: 0, blue: 0, alpha: 100).cgColor
-            layers[index]?.layer.borderWidth = 2.0
+            layers[index]?.layer.borderWidth = 1.0/(layers[index]?.totalScaleX)!
         }
     }
     

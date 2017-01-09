@@ -59,6 +59,7 @@ class EditorViewController: UIViewController, UIImagePickerControllerDelegate, U
         layer?.transform = (layer?.transform.scaledBy(x: sender.scale, y: sender.scale))!
         layer?.totalScaleX *= sender.scale
         layer?.totalScaleY *= sender.scale
+        layer?.layer.borderWidth = 1.0/(layer?.totalScaleX)!
         
         //print("resized to a scale of: ",sender.scale)
         sender.scale = 1
@@ -121,8 +122,10 @@ class EditorViewController: UIViewController, UIImagePickerControllerDelegate, U
     }
     
     @IBAction func done(_ sender: UIBarButtonItem) {
-        if layerStack.layers.count > 0{
-            let img = merge2(layerStack)
+               
+        /*
+         if layerStack.layers.count > 0{
+            let img = merge(layerStack)
             layerStack.clearScreen()
             let imv = UIImageViewLayer(image: img)
             imv.contentMode = .scaleAspectFit
@@ -132,6 +135,7 @@ class EditorViewController: UIViewController, UIImagePickerControllerDelegate, U
             layerStack.layers[0]?.totalScaleY = layerStack.backgroundTotalScaleY //(unødvendig uten transformen som også gjøres
             layerStack.layers[0]?.totalRotation = layerStack.backgroundTotalRotation //(unødvendig uten transformen som også gjøres
         }
+        */
     }
     
     @IBAction func newTextLayer(_ sender: UIButton) {
@@ -140,7 +144,8 @@ class EditorViewController: UIViewController, UIImagePickerControllerDelegate, U
     
     //MARK: Image Processing
     
-    func merge(_ bg: UIImage, overlay: UIImage){
+    /*
+    func merge2(_ bg: UIImage, overlay: UIImage){
         let size = bg.size
         UIGraphicsBeginImageContext(size)
         
@@ -153,9 +158,9 @@ class EditorViewController: UIViewController, UIImagePickerControllerDelegate, U
         merge = UIGraphicsGetImageFromCurrentImageContext()
         UIGraphicsEndImageContext()
     }
+    */
     
-    
-    func merge2(_ layerStack: LayerStackUIView) -> UIImage{
+    func merge(_ layerStack: LayerStackUIView) -> UIImage{
         //prepare each layer:
         var merge: UIImage!
         layerStack.prepareForMerge()
@@ -290,7 +295,14 @@ class EditorViewController: UIViewController, UIImagePickerControllerDelegate, U
     
     //MARK:Navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        
+        if segue.identifier == "SaveImage"{
+            if layerStack.layers.count > 0{
+                if let destination = segue.destination as? RenderViewController{
+                    //Gammel "Clear screen" code ligger i "done"-actionen
+                    destination.img = merge(layerStack)
+                }
+            }
+        }
     }
  
     
