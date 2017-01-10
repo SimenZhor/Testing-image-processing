@@ -150,95 +150,6 @@ class EditorViewController: UIViewController, UIImagePickerControllerDelegate, U
     
     //MARK: Image Processing
     
-    
-    func merge2(_ layerStack: LayerStackUIView) -> UIImage{
-        //prepare each layer:
-        var merge: UIImage!
-        layerStack.prepareForMerge()
-        
-        //klargjør konteksten:
-        let contextElm = layerStack.layers[0]
-        let contextSize = contextElm.image!.size
-        let contextOrigin = layerStack.convert(contextElm.bounds.origin, from: contextElm)
-        
-        //Behandler background layer
-        layerStack.backgroundOrigin = contextOrigin //skal brukes på UIImageView når metoden er ferdig
-        layerStack.backgroundTransform = contextElm.transform //skal brukes på UIImageView når metoden er ferdig
-        layerStack.backgroundTotalScaleX = contextElm.totalScaleX //skal brukes på resterende layers
-        layerStack.backgroundTotalScaleY = contextElm.totalScaleY //skal brukes på resterende layers
-        layerStack.backgroundTotalRotation = contextElm.totalRotation //skal brukes på resterende layers
-        
-        if layerStack.layers.count == 1 {
-            return layerStack.layers[0].image!
-        }
-        
-        UIGraphicsBeginImageContextWithOptions(contextSize, false, 1)
-        let context = UIGraphicsGetCurrentContext()!
-        context.interpolationQuality = .high
-        
-        let backgroundRect = CGRect(origin: CGPoint.zero, size: contextSize)
-        let backgroundImage = contextElm.image!
-        backgroundImage.draw(in: backgroundRect)
-        
-        //klargjør matriser og skaleringer
-        var matrix = CGAffineTransform()
-        var backgroundRescaleMatrix = CGAffineTransform()
-        var rotationFlipBackMatrix = CGAffineTransform()
-        let xScale = layerStack.backgroundTotalScaleX
-        let yScale = layerStack.backgroundTotalScaleY
-        
-        //behandler resterende layers:
-        for i in 1...(layerStack.count-1){ //imageView: UIImageViewLayer! in layerStack.layers{
-            
-            let imageView = (layerStack.layers[i] as  UIImageViewLayer!)!
-            let image = CIImage(image: imageView.image!)!
-            
-            //Finner center-plasseringen til det manipulerte bildet i forhold til context
-            let backgroundRotationMatrix = CGAffineTransform.init(rotationAngle: layerStack.backgroundTotalRotation)
-            let relativeCenterX = (imageView.center.x - contextOrigin.x)/xScale
-            let relativeCenterY = (imageView.center.y - contextOrigin.y)/yScale
-            var relCenter = CGPoint(x: relativeCenterX, y: relativeCenterY)
-            relCenter = relCenter.applying(backgroundRotationMatrix)
-            
-            if (imageView.totalScaleY/yScale) > 1 || (imageView.totalScaleX/xScale > 1){
-                //WARNING about to loose quality
-                let alert = UIAlertController(title: "Warning: Quality loss", message: "You are about to scale the image in layer \(i+1) to a size larger than it's original dimentions (\(imageView.image!.size.width)x\(imageView.image!.size.height). This will result in a quality loss.)", preferredStyle: .alert)
-                let ok = UIAlertAction(title: "Ok", style: .default, handler: nil)
-                let scaleBG = UIAlertAction(title: "Scale background down instead", style: .cancel, handler: {
-                    action in
-                    
-                })
-                alert.addAction(ok)
-                alert.addAction(scaleBG)
-                
-                present(alert, animated: true, completion: nil)
-            }
-            
-            rotationFlipBackMatrix = CGAffineTransform.init(rotationAngle: imageView.totalRotation*2 - layerStack.backgroundTotalRotation) //NOTAT: transformen i imageview har motsatt koordinatsystem på rotasjonen, så den gjøres feil vei. Retter det opp med denne. Legger også til bakgrunnens rotasjon for å motvirke eventuelle rotasjoner gjort på den.
-            backgroundRescaleMatrix = CGAffineTransform.init(scaleX: 1/xScale, y: 1/yScale) //NOTAT: skaleringen her skal være lik skaleringen som blir gjort på bakgrunnen når denne tegnes i konteksten og ikke blir tilført affine-avbildningen
-            
-                
-            matrix = imageView.transform.concatenating(backgroundRescaleMatrix)
-            matrix = matrix.concatenating(rotationFlipBackMatrix)
-
-            let tempFilter = CIFilter(name: "CIAffineTransform",
-                                          withInputParameters: [kCIInputImageKey: image, kCIInputTransformKey: matrix])
-            let filterResult = UIImage(ciImage: ((tempFilter?.outputImage)! as CIImage))
-            
-            //Prepare for draw to context:
-            let drawOrigin = CGPoint(x: (relCenter.x - filterResult.size.width*0.5), y: (relCenter.y - filterResult.size.height*0.5))
-            let drawingRect : CGRect = CGRect(origin: drawOrigin, size: filterResult.size)
-            
-            //Draw to context:
-            filterResult.draw(in: drawingRect)
-
-        }
-        merge = UIGraphicsGetImageFromCurrentImageContext()
-        UIGraphicsEndImageContext()
-        //UIImagePNGRepresentation(merge).writeto
-        return merge
-    }
-    
     func merge(_ layerStack: LayerStackUIView) -> UIImage{
         //prepare each layer:
         var merge: UIImage!
@@ -314,8 +225,6 @@ class EditorViewController: UIViewController, UIImagePickerControllerDelegate, U
             ownRotationMatrix = CGAffineTransform.init(rotationAngle: layer.totalRotation)
             backgroundRotationMatrix = CGAffineTransform.init(rotationAngle: -layerStack.backgroundTotalRotation)
             backgroundRescaleMatrix = CGAffineTransform.init(scaleX: 1/xScale, y: 1/yScale) //NOTAT: skaleringen her skal være lik skaleringen som blir gjort på bakgrunnen når denne tegnes i konteksten og ikke blir tilført affine-avbildningen
-            
-            
             
             matrix = backgroundRescaleMatrix.concatenating(ownScaleMatrix)
             print("\n\nSkaleringsmatrise layer\(i):\n\(matrix)\n\n")

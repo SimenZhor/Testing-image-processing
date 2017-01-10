@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		F1347BF01E250D8A00E1784C /* Layer.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1347BEF1E250D8A00E1784C /* Layer.swift */; };
+		F1347BF21E2512EC00E1784C /* Impact.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F1347BF11E2512EC00E1784C /* Impact.ttf */; };
 		F135A4BC1E22EA1300D974BC /* ReverseShowSegue.swift in Sources */ = {isa = PBXBuildFile; fileRef = F135A4BB1E22EA1300D974BC /* ReverseShowSegue.swift */; };
 		F19C44051D29C14200457630 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F19C44041D29C14200457630 /* AppDelegate.swift */; };
 		F19C44071D29C14200457630 /* EditorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F19C44061D29C14200457630 /* EditorViewController.swift */; };
@@ -41,6 +43,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		F1347BEF1E250D8A00E1784C /* Layer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Layer.swift; sourceTree = "<group>"; };
+		F1347BF11E2512EC00E1784C /* Impact.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = Impact.ttf; path = Assets.xcassets/Impact.ttf; sourceTree = "<group>"; };
 		F135A4BB1E22EA1300D974BC /* ReverseShowSegue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReverseShowSegue.swift; sourceTree = "<group>"; };
 		F19C44011D29C14100457630 /* Testing image processing.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Testing image processing.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		F19C44041D29C14200457630 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -88,6 +92,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		F1347BF31E25130800E1784C /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				F1347BF11E2512EC00E1784C /* Impact.ttf */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
 		F135A4BD1E22EA2A00D974BC /* Custom Segue */ = {
 			isa = PBXGroup;
 			children = (
@@ -110,6 +122,7 @@
 			children = (
 				F1A07B191D2A619600EB6983 /* LayerStackUIView.swift */,
 				F1B11D2E1E1EF18A00283BFF /* UIImageViewLayer.swift */,
+				F1347BEF1E250D8A00E1784C /* Layer.swift */,
 				F1A07B1B1D2A662600EB6983 /* Toolbar.swift */,
 			);
 			name = Views;
@@ -146,6 +159,7 @@
 				F19C44321D29D71900457630 /* uiimageextension.swift */,
 				F1C1A5FC1E23C8BC00BF48F7 /* LinkedList.swift */,
 				F19C440B1D29C14200457630 /* Assets.xcassets */,
+				F1347BF31E25130800E1784C /* Resources */,
 				F19C440D1D29C14200457630 /* LaunchScreen.storyboard */,
 				F19C44101D29C14200457630 /* Info.plist */,
 			);
@@ -280,6 +294,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F1347BF21E2512EC00E1784C /* Impact.ttf in Resources */,
 				F1C1A5FB1E23934200BF48F7 /* Main.storyboard in Resources */,
 				F19C440F1D29C14200457630 /* LaunchScreen.storyboard in Resources */,
 				F19C440C1D29C14200457630 /* Assets.xcassets in Resources */,
@@ -314,6 +329,7 @@
 				F1B11D2F1E1EF18A00283BFF /* UIImageViewLayer.swift in Sources */,
 				F1C42E551E2268750016CC7E /* RenderViewController.swift in Sources */,
 				F1A07B1C1D2A662600EB6983 /* Toolbar.swift in Sources */,
+				F1347BF01E250D8A00E1784C /* Layer.swift in Sources */,
 				F19C44331D29D71900457630 /* uiimageextension.swift in Sources */,
 				F19C44051D29C14200457630 /* AppDelegate.swift in Sources */,
 			);
