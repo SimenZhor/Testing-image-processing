@@ -8,6 +8,10 @@
 
 import UIKit
 
+protocol RenderDelegate: class{
+    func mergeCompleted()
+}
+
 class RenderViewController: UIViewController {
 
     //MARK: Outlets
@@ -16,6 +20,7 @@ class RenderViewController: UIViewController {
     @IBOutlet weak var canvasUIView: UIView!
     
     //MARK: Properties
+    weak var delegate:RenderDelegate?
     var img: UIImage = UIImage()
     
     override func viewWillAppear(_ animated: Bool) {
@@ -66,6 +71,7 @@ class RenderViewController: UIViewController {
     
     
     func returnToEditor(){
+        self.delegate?.mergeCompleted()
         guard (navigationController?.popViewController(animated:true)) != nil
             else {
                 print("No Navigation Controller")

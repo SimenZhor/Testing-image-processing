@@ -21,10 +21,29 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <view contentMode="scaleToFill" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="LaS-GD-dCr" customClass="LayerStackUIView" customModule="Testing_image_processing" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="20" width="375" height="607"/>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="LaS-GD-dCr" customClass="LayerStackUIView" customModule="Testing_image_processing" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="20" width="375" height="603"/>
+                                <subviews>
+                                    <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" barStyle="black" translatesAutoresizingMaskIntoConstraints="NO" id="uhV-dV-5QQ">
+                                        <rect key="frame" x="0.0" y="559" width="375" height="44"/>
+                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                        <items>
+                                            <barButtonItem systemItem="organize" id="1C1-Gd-GPP"/>
+                                            <barButtonItem style="plain" systemItem="flexibleSpace" id="dp0-kY-npm"/>
+                                            <barButtonItem systemItem="trash" id="FaT-nR-xK2"/>
+                                            <barButtonItem style="plain" systemItem="flexibleSpace" id="wnf-4e-0Rn"/>
+                                            <barButtonItem width="42" style="plain" systemItem="fixedSpace" id="ygd-he-nEv"/>
+                                        </items>
+                                        <color key="barTintColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                    </toolbar>
+                                </subviews>
                                 <color key="backgroundColor" red="0.1215686275" green="0.12941176469999999" blue="0.14117647059999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <gestureRecognizers/>
+                                <constraints>
+                                    <constraint firstAttribute="trailing" secondItem="uhV-dV-5QQ" secondAttribute="trailing" id="N9m-g4-JW2"/>
+                                    <constraint firstAttribute="bottom" secondItem="uhV-dV-5QQ" secondAttribute="bottom" id="ktZ-ZK-yQA"/>
+                                    <constraint firstItem="uhV-dV-5QQ" firstAttribute="leading" secondItem="LaS-GD-dCr" secondAttribute="leading" id="qGP-OH-7mx"/>
+                                </constraints>
                                 <connections>
                                     <outletCollection property="gestureRecognizers" destination="LKr-7m-6hN" appends="YES" id="36k-4N-W3R"/>
                                     <outletCollection property="gestureRecognizers" destination="adS-ri-I4b" appends="YES" id="99d-f0-4l7"/>
@@ -125,6 +144,7 @@
                         <outlet property="prevLayerButton" destination="EEu-3f-jMk" id="xp3-yj-42R"/>
                         <outlet property="rotate" destination="adS-ri-I4b" id="3SG-0x-aeB"/>
                         <outlet property="textButton" destination="5ts-aH-9JI" id="fDO-fe-l5z"/>
+                        <outlet property="toolbar" destination="tCw-pP-yHg" id="Cfe-iS-ICW"/>
                         <outlet property="zoom" destination="LKr-7m-6hN" id="Smn-TE-a2R"/>
                     </connections>
                 </viewController>

@@ -63,4 +63,9 @@ class UIImageViewLayer: UIImageView {
         }
         
     }
+    
+    func rotate(angle: CGFloat){
+        self.transform = self.transform.rotated(by: angle)
+        self.totalRotation += angle
+    }
 }

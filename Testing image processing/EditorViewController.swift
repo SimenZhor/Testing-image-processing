@@ -10,7 +10,7 @@ import UIKit
 import AVFoundation
 import CoreImage
 
-class EditorViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIGestureRecognizerDelegate {
+class EditorViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIGestureRecognizerDelegate, RenderDelegate {
     
     @IBOutlet var pan: UIPanGestureRecognizer!
     @IBOutlet var zoom: UIPinchGestureRecognizer!
@@ -21,6 +21,7 @@ class EditorViewController: UIViewController, UIImagePickerControllerDelegate, U
     @IBOutlet weak var layerStack: LayerStackUIView!
     @IBOutlet weak var doneButton: UIBarButtonItem!
     @IBOutlet weak var textButton: UIButton!
+    @IBOutlet weak var toolbar: UIToolbar!
     
     let imagePicker = UIImagePickerController()
     var bg: UIImage!
@@ -31,13 +32,14 @@ class EditorViewController: UIViewController, UIImagePickerControllerDelegate, U
     
     override func viewWillAppear(_ animated: Bool) {
         self.navigationController?.isNavigationBarHidden = true
+        self.toolbar.setBackgroundImage(UIImage(), forToolbarPosition: .any, barMetrics: .default)
+        self.toolbar.setShadowImage(UIImage(), forToolbarPosition: .any)
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         zoom.isEnabled = true
-        
         imagePicker.delegate = self
     }
     
@@ -65,8 +67,7 @@ class EditorViewController: UIViewController, UIImagePickerControllerDelegate, U
     @IBAction func rotate(_ sender: UIRotationGestureRecognizer) {
         currentLayer = layerStack.currentSelection
         let layer = layerStack.layers[currentLayer]
-        layer.transform = layer.transform.rotated(by: sender.rotation)
-        layer.totalRotation -= sender.rotation
+        layer.rotate(angle: sender.rotation)
         //sender.velocity kan brukes til å avbryte rotasjonen hvis bevegelsen går fra sakte til fort.
         //print("rotated ", sender.rotation," degrees")
         sender.rotation = 0
@@ -150,7 +151,7 @@ class EditorViewController: UIViewController, UIImagePickerControllerDelegate, U
     //MARK: Image Processing
     
     
-    func merge(_ layerStack: LayerStackUIView) -> UIImage{
+    func merge2(_ layerStack: LayerStackUIView) -> UIImage{
         //prepare each layer:
         var merge: UIImage!
         layerStack.prepareForMerge()
@@ -172,6 +173,8 @@ class EditorViewController: UIViewController, UIImagePickerControllerDelegate, U
         }
         
         UIGraphicsBeginImageContextWithOptions(contextSize, false, 1)
+        let context = UIGraphicsGetCurrentContext()!
+        context.interpolationQuality = .high
         
         let backgroundRect = CGRect(origin: CGPoint.zero, size: contextSize)
         let backgroundImage = contextElm.image!
@@ -197,6 +200,19 @@ class EditorViewController: UIViewController, UIImagePickerControllerDelegate, U
             var relCenter = CGPoint(x: relativeCenterX, y: relativeCenterY)
             relCenter = relCenter.applying(backgroundRotationMatrix)
             
+            if (imageView.totalScaleY/yScale) > 1 || (imageView.totalScaleX/xScale > 1){
+                //WARNING about to loose quality
+                let alert = UIAlertController(title: "Warning: Quality loss", message: "You are about to scale the image in layer \(i+1) to a size larger than it's original dimentions (\(imageView.image!.size.width)x\(imageView.image!.size.height). This will result in a quality loss.)", preferredStyle: .alert)
+                let ok = UIAlertAction(title: "Ok", style: .default, handler: nil)
+                let scaleBG = UIAlertAction(title: "Scale background down instead", style: .cancel, handler: {
+                    action in
+                    
+                })
+                alert.addAction(ok)
+                alert.addAction(scaleBG)
+                
+                present(alert, animated: true, completion: nil)
+            }
             
             rotationFlipBackMatrix = CGAffineTransform.init(rotationAngle: imageView.totalRotation*2 - layerStack.backgroundTotalRotation) //NOTAT: transformen i imageview har motsatt koordinatsystem på rotasjonen, så den gjøres feil vei. Retter det opp med denne. Legger også til bakgrunnens rotasjon for å motvirke eventuelle rotasjoner gjort på den.
             backgroundRescaleMatrix = CGAffineTransform.init(scaleX: 1/xScale, y: 1/yScale) //NOTAT: skaleringen her skal være lik skaleringen som blir gjort på bakgrunnen når denne tegnes i konteksten og ikke blir tilført affine-avbildningen
@@ -222,6 +238,109 @@ class EditorViewController: UIViewController, UIImagePickerControllerDelegate, U
         //UIImagePNGRepresentation(merge).writeto
         return merge
     }
+    
+    func merge(_ layerStack: LayerStackUIView) -> UIImage{
+        //prepare each layer:
+        var merge: UIImage!
+        layerStack.prepareForMerge()
+        
+        //klargjør konteksten:
+        let contextElm = layerStack.layers[0]
+        let contextSize = contextElm.image!.size
+        let contextOrigin = layerStack.convert(contextElm.bounds.origin, from: contextElm)
+        
+        //Behandler background layer
+        layerStack.backgroundOrigin = contextOrigin //skal brukes på UIImageView når metoden er ferdig
+        layerStack.backgroundTransform = contextElm.transform //skal brukes på UIImageView når metoden er ferdig
+        layerStack.backgroundTotalScaleX = contextElm.totalScaleX //skal brukes på resterende layers
+        layerStack.backgroundTotalScaleY = contextElm.totalScaleY //skal brukes på resterende layers
+        layerStack.backgroundTotalRotation = contextElm.totalRotation //skal brukes på resterende layers
+        
+        
+        if layerStack.layers.count == 1 {
+            return layerStack.layers[0].image!
+        }
+        
+        
+        
+        UIGraphicsBeginImageContextWithOptions(contextSize, false, UIScreen.main.scale)
+        let context = UIGraphicsGetCurrentContext()!
+        context.interpolationQuality = .high
+        
+        
+        let backgroundRect = CGRect(origin: CGPoint.zero, size: contextSize)
+        let backgroundImage = contextElm.image!
+        backgroundImage.draw(in: backgroundRect)
+        
+        
+        //klargjør matriser og skaleringer
+        var matrix = CGAffineTransform()
+        var backgroundRotationMatrix = CGAffineTransform()
+        var backgroundRescaleMatrix = CGAffineTransform()
+        var ownScaleMatrix = CGAffineTransform()
+        var ownRotationMatrix = CGAffineTransform()
+        let xScale = layerStack.backgroundTotalScaleX
+        let yScale = layerStack.backgroundTotalScaleY
+        
+        //behandler resterende layers:
+        for i in 1...(layerStack.count-1){ //imageView: UIImageViewLayer! in layerStack.layers{
+            context.saveGState()
+            
+            let layer = (layerStack.layers[i] as  UIImageViewLayer!)!
+            let image = layer.image!
+            
+            //Finner center-plasseringen til det manipulerte bildet i forhold til context
+            backgroundRotationMatrix = CGAffineTransform.init(rotationAngle: -layerStack.backgroundTotalRotation)
+            let relativeCenterX = (layer.center.x - contextOrigin.x)/xScale
+            let relativeCenterY = (layer.center.y - contextOrigin.y)/yScale
+            var relCenter = CGPoint(x: relativeCenterX, y: relativeCenterY)
+            relCenter = relCenter.applying(backgroundRotationMatrix)
+            
+            if (layer.totalScaleY/yScale) > 1 || (layer.totalScaleX/xScale > 1){
+                //WARNING about to loose quality
+                let alert = UIAlertController(title: "Warning: Quality loss", message: "You are about to scale the image in layer \(i+1) to a size larger than it's original dimentions (\(layer.image!.size.width)x\(layer.image!.size.height). This will result in a quality loss.)", preferredStyle: .alert)
+                let ok = UIAlertAction(title: "Ok", style: .default, handler: nil)
+                let scaleBG = UIAlertAction(title: "Scale background down instead", style: .cancel, handler: {
+                    action in
+                    //endre på layer[0] totalscale verdiene og start metoden på nytt
+                })
+                alert.addAction(ok)
+                alert.addAction(scaleBG)
+                
+                present(alert, animated: true, completion: nil)
+            }
+            
+            ownScaleMatrix = CGAffineTransform.init(scaleX: layer.totalScaleX, y: layer.totalScaleY)
+            ownRotationMatrix = CGAffineTransform.init(rotationAngle: layer.totalRotation)
+            backgroundRotationMatrix = CGAffineTransform.init(rotationAngle: -layerStack.backgroundTotalRotation)
+            backgroundRescaleMatrix = CGAffineTransform.init(scaleX: 1/xScale, y: 1/yScale) //NOTAT: skaleringen her skal være lik skaleringen som blir gjort på bakgrunnen når denne tegnes i konteksten og ikke blir tilført affine-avbildningen
+            
+            
+            
+            matrix = backgroundRescaleMatrix.concatenating(ownScaleMatrix)
+            print("\n\nSkaleringsmatrise layer\(i):\n\(matrix)\n\n")
+            matrix = matrix.concatenating(ownRotationMatrix)
+            matrix = matrix.concatenating(backgroundRotationMatrix)
+            
+            context.translateBy(x: relCenter.x, y: relCenter.y)
+            context.concatenate(matrix)
+            context.translateBy(x: -relCenter.x, y: -relCenter.y)
+            let filterResult = layer.bounds
+            //Prepare for draw to context:
+            let drawOrigin = CGPoint(x: (relCenter.x - filterResult.size.width*0.5), y: (relCenter.y - filterResult.size.height*0.5))
+            let drawingRect : CGRect = CGRect(origin: drawOrigin, size: filterResult.size)
+            
+            //Draw to context:
+            image.draw(in: drawingRect)
+            
+            context.restoreGState()
+        }
+        merge = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        //UIImagePNGRepresentation(merge).writeto
+        return merge
+    }
+
     
     
     //MARK: Imagepicker methods
@@ -258,13 +377,14 @@ class EditorViewController: UIViewController, UIImagePickerControllerDelegate, U
             if layerStack.layers.count > 0{
                 if let destination = segue.destination as? RenderViewController{
                     //Gammel "Clear screen" code ligger i "done"-actionen
+                    destination.delegate = self
                     destination.img = merge(layerStack)
                 }
             }
         }
     }
     
-    override func unwind(for unwindSegue: UIStoryboardSegue, towardsViewController subsequentVC: UIViewController) {
+    func mergeCompleted() {
         layerStack.mergeCompleted()
     }
  
