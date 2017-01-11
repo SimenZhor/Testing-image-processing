@@ -8,13 +8,12 @@
 
 import UIKit
 
-class UIImageViewLayer: UIImageView {
+class UIImageViewLayer: UIImageView{
 
     //Bonus Properties:
     var totalRotation:CGFloat = 0
     var totalScaleX:CGFloat = 1
     var totalScaleY:CGFloat = 1
-    //var absOrigin:CGPoint = CGPoint.zero
     
     func scaleAndCenterInParent(){
         //Scales and centers to superview, to set superview use function: "scaleCenterAndSetParent(to: UIView)"
@@ -36,7 +35,7 @@ class UIImageViewLayer: UIImageView {
                     }
                     
                     //apply transform to self (imageview)
-                    self.scale(xScale: scale, yScale: scale, border: false)
+                    self.scale(xScale: scale, yScale: scale, totScale: scale, border: false)
                     
                 }
                 
@@ -53,9 +52,9 @@ class UIImageViewLayer: UIImageView {
         self.scaleAndCenterInParent()
     }
     
-    func scale(xScale: CGFloat, yScale: CGFloat, border: Bool){
-      
-        self.transform = self.transform.scaledBy(x: xScale, y: yScale)
+    func scale(xScale: CGFloat, yScale: CGFloat, totScale: CGFloat, border: Bool){
+        
+        self.transform = self.transform.scaledBy(x: totScale, y: totScale)
         self.totalScaleX *= xScale
         self.totalScaleY *= yScale
         if border{

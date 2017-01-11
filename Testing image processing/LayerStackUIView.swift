@@ -10,7 +10,7 @@ import UIKit
 
 class LayerStackUIView: UIView {
     
-    var layers: LinkedList<UIImageViewLayer> = LinkedList<UIImageViewLayer>()
+    var layers: LinkedList<Layer> = LinkedList<Layer>()
     var currentSelection = 0
     var backgroundSize: CGSize = CGSize.zero
     var backgroundTotalScaleX: CGFloat = 1
@@ -20,17 +20,25 @@ class LayerStackUIView: UIView {
     var backgroundOrigin: CGPoint = CGPoint.zero
 
     
-    func newBackgroundLayer(_ layer: UIImageViewLayer){
+    func newBackgroundLayer(_ layer: Layer){
         backgroundSize = (layer.image?.size)!
         newLayer(layer)
         //TODO: flytt layer til index 0 i stacken hvis det allerede eksisterer layers. Trenger en metode for flytting av layers uansett
         
     }
     
-    func newLayer(_ layer: UIImageViewLayer){
+    func newLayer(_ layer: Layer){
         layers.append(layer)
+        
+        /*
+        if let imv = layer.item as? UIImageViewLayer{
+            //do stuff with imageview
+        }else if let txv = layer.item as? UITextViewLayer {
+            //do stuff with textview
+        }
+        */
+        
         layer.scaleCenterAndSetParent(to: self)
-
         
         deselector(currentSelection)
         currentSelection = layers.count - 1
@@ -41,7 +49,7 @@ class LayerStackUIView: UIView {
         return layers.count
     }
     
-    func getLayer(_ index: Int) ->UIImageViewLayer{
+    func getLayer(_ index: Int) ->Layer{
         deselector(currentSelection)
         selector(index)
         currentSelection = index
@@ -63,7 +71,7 @@ class LayerStackUIView: UIView {
         }
         
         for subview in self.subviews{
-            if subview is UIImageViewLayer{
+            if subview is LayerItem{
                 subview.removeFromSuperview()
             }
         }
@@ -79,14 +87,16 @@ class LayerStackUIView: UIView {
     
     fileprivate func deselector(_ index: Int){
         if layers.count > 0 && index >= 0 && index < layers.count{
-            layers[index].layer.borderColor = UIColor(red: 0, green: 0, blue: 0, alpha: 000).cgColor
-            layers[index].layer.borderWidth = 0.0
+            let view = layers[index].item as! UIView
+            view.layer.borderColor = UIColor(red: 0, green: 0, blue: 0, alpha: 000).cgColor
+            view.layer.borderWidth = 0.0
         }
     }
     fileprivate func selector(_ index: Int){
         if layers.count > 0 && index >= 0 && index < layers.count{
-            layers[index].layer.borderColor = UIColor(red: 255, green: 0, blue: 0, alpha: 100).cgColor
-            layers[index].layer.borderWidth = 1.0/layers[index].totalScaleX
+            let view = layers[index].item as! UIView
+            view.layer.borderColor = UIColor(red: 255, green: 0, blue: 0, alpha: 100).cgColor
+            view.layer.borderWidth = 1.0/layers[index].totalScaleX
         }
     }
     

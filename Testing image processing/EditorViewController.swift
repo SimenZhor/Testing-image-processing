@@ -38,7 +38,6 @@ class EditorViewController: UIViewController, UIImagePickerControllerDelegate, U
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         zoom.isEnabled = true
         imagePicker.delegate = self
     }
@@ -57,7 +56,11 @@ class EditorViewController: UIViewController, UIImagePickerControllerDelegate, U
     
     @IBAction func resizeAction(_ sender: UIPinchGestureRecognizer) {
         currentLayer = layerStack.currentSelection
-        layerStack.layers[currentLayer].scale(xScale: sender.scale, yScale: sender.scale, border: true)
+        if let (x,y) = sender.scale(view: self.view){
+            layerStack.layers[currentLayer].scale(xScale: x, yScale: y, totScale: sender.scale, border: true)
+        }else{
+            layerStack.layers[currentLayer].scale(xScale: sender.scale, yScale: sender.scale, totScale: sender.scale, border: true)
+        }
         
         //print("resized to a scale of: ",sender.scale)
         sender.scale = 1
@@ -75,7 +78,7 @@ class EditorViewController: UIViewController, UIImagePickerControllerDelegate, U
     
     @IBAction func moveAround(_ sender: UIPanGestureRecognizer) {
         currentLayer = layerStack.currentSelection
-        let layer = layerStack.layers[currentLayer]
+        let layer = layerStack.layers[currentLayer].item as! UIView
         let translation = sender.translation(in: self.view)
         layer.center = CGPoint(x:layer.center.x + translation.x,
                                 y:layer.center.y + translation.y)
@@ -84,12 +87,7 @@ class EditorViewController: UIViewController, UIImagePickerControllerDelegate, U
         sender.setTranslation(CGPoint.zero, in: self.view)
     }
     
-    @IBAction func newLayer(_ sender: UIBarButtonItem) {
-        imagePicker.allowsEditing = false
-        imagePicker.sourceType = .photoLibrary
-        
-        self.present(imagePicker, animated: true, completion: nil)
-    }
+
     
     @IBAction func nextLayer(_ sender: UIBarButtonItem) {
         currentLayer = layerStack.currentSelection
@@ -135,8 +133,20 @@ class EditorViewController: UIViewController, UIImagePickerControllerDelegate, U
         */
     }
     
-    @IBAction func newTextLayer(_ sender: UIButton) {
+    @IBAction func newLayer(_ sender: UIBarButtonItem) {
+        imagePicker.allowsEditing = false
+        imagePicker.sourceType = .photoLibrary
+        
+        self.present(imagePicker, animated: true, completion: nil)
+    }
     
+    @IBAction func newTextLayer(_ sender: UIButton) {
+        let layer = Layer(text: "NEW TEXT LAYER")
+        if(layerStack.count > 0){
+            layerStack.newLayer(layer)
+        }else{
+            layerStack.newBackgroundLayer(layer)
+        }
     }
     
     func linkLayers(indexlist: [Int]){
@@ -156,13 +166,23 @@ class EditorViewController: UIViewController, UIImagePickerControllerDelegate, U
         layerStack.prepareForMerge()
         
         //klargjør konteksten:
-        let contextElm = layerStack.layers[0]
-        let contextSize = contextElm.image!.size
-        let contextOrigin = layerStack.convert(contextElm.bounds.origin, from: contextElm)
+        let contextElm = layerStack.layers[0].item
+        var contextSize = CGSize()
+        var contextOrigin = CGPoint()
+        var backgroundImage = UIImage()
+        
+        if let imv = contextElm as? UIImageViewLayer{
+            contextSize = imv.image!.size
+            contextOrigin = layerStack.convert(imv.bounds.origin, from: imv)
+            backgroundImage = imv.image!
+        }else if let txv = contextElm as? UITextViewLayer{
+            //Kan ikke ha tekst som bakgrunn (foreløpig)
+        }
+        
         
         //Behandler background layer
-        layerStack.backgroundOrigin = contextOrigin //skal brukes på UIImageView når metoden er ferdig
-        layerStack.backgroundTransform = contextElm.transform //skal brukes på UIImageView når metoden er ferdig
+        //layerStack.backgroundOrigin = contextOrigin //skal brukes på UIImageView når metoden er ferdig
+        //layerStack.backgroundTransform = contextElm.transform //skal brukes på UIImageView når metoden er ferdig
         layerStack.backgroundTotalScaleX = contextElm.totalScaleX //skal brukes på resterende layers
         layerStack.backgroundTotalScaleY = contextElm.totalScaleY //skal brukes på resterende layers
         layerStack.backgroundTotalRotation = contextElm.totalRotation //skal brukes på resterende layers
@@ -180,7 +200,6 @@ class EditorViewController: UIViewController, UIImagePickerControllerDelegate, U
         
         
         let backgroundRect = CGRect(origin: CGPoint.zero, size: contextSize)
-        let backgroundImage = contextElm.image!
         backgroundImage.draw(in: backgroundRect)
         
         
@@ -194,32 +213,51 @@ class EditorViewController: UIViewController, UIImagePickerControllerDelegate, U
         let yScale = layerStack.backgroundTotalScaleY
         
         //behandler resterende layers:
-        for i in 1...(layerStack.count-1){ //imageView: UIImageViewLayer! in layerStack.layers{
+        for i in 1...(layerStack.count-1){ //imageView: Layer! in layerStack.layers{
             context.saveGState()
+            let layer = (layerStack.layers[i] as  Layer!)!
             
-            let layer = (layerStack.layers[i] as  UIImageViewLayer!)!
-            let image = layer.image!
+            //Variables needed from specific layertypes
+            var image: UIImage?
+            var textView: UITextViewLayer?
+            var relativeCenterX = CGFloat()
+            var relativeCenterY = CGFloat()
+            var layerBounds = CGRect()
+            
+            if let imv = layer.item as? UIImageViewLayer{
+                image = imv.image!
+                relativeCenterX = (imv.center.x - contextOrigin.x)/xScale
+                relativeCenterY = (imv.center.y - contextOrigin.y)/yScale
+                layerBounds = imv.bounds
+                
+                if (layer.totalScaleY/yScale) > 1 || (layer.totalScaleX/xScale > 1){
+                    //WARNING about to loose quality
+                    let alert = UIAlertController(title: "Warning: Quality loss", message: "You are about to scale the image in layer \(i+1) to a size larger than it's original dimentions (\(layer.image!.size.width)x\(layer.image!.size.height). This will result in a quality loss.)", preferredStyle: .alert)
+                    let ok = UIAlertAction(title: "Ok", style: .default, handler: nil)
+                    let scaleBG = UIAlertAction(title: "Scale background down instead", style: .cancel, handler: {
+                        action in
+                        //endre på layer[0] totalscale verdiene og start metoden på nytt
+                    })
+                    alert.addAction(ok)
+                    alert.addAction(scaleBG)
+                    
+                    present(alert, animated: true, completion: nil)
+                }
+                
+            }else if let txv = layerStack.layers[i].item as? UITextViewLayer{
+                textView = txv
+                relativeCenterX = (txv.center.x - contextOrigin.x)/xScale
+                relativeCenterY = (txv.center.y - contextOrigin.y)/yScale
+                layerBounds = txv.bounds
+            }
             
             //Finner center-plasseringen til det manipulerte bildet i forhold til context
             backgroundRotationMatrix = CGAffineTransform.init(rotationAngle: -layerStack.backgroundTotalRotation)
-            let relativeCenterX = (layer.center.x - contextOrigin.x)/xScale
-            let relativeCenterY = (layer.center.y - contextOrigin.y)/yScale
+            
             var relCenter = CGPoint(x: relativeCenterX, y: relativeCenterY)
             relCenter = relCenter.applying(backgroundRotationMatrix)
             
-            if (layer.totalScaleY/yScale) > 1 || (layer.totalScaleX/xScale > 1){
-                //WARNING about to loose quality
-                let alert = UIAlertController(title: "Warning: Quality loss", message: "You are about to scale the image in layer \(i+1) to a size larger than it's original dimentions (\(layer.image!.size.width)x\(layer.image!.size.height). This will result in a quality loss.)", preferredStyle: .alert)
-                let ok = UIAlertAction(title: "Ok", style: .default, handler: nil)
-                let scaleBG = UIAlertAction(title: "Scale background down instead", style: .cancel, handler: {
-                    action in
-                    //endre på layer[0] totalscale verdiene og start metoden på nytt
-                })
-                alert.addAction(ok)
-                alert.addAction(scaleBG)
-                
-                present(alert, animated: true, completion: nil)
-            }
+           
             
             ownScaleMatrix = CGAffineTransform.init(scaleX: layer.totalScaleX, y: layer.totalScaleY)
             ownRotationMatrix = CGAffineTransform.init(rotationAngle: layer.totalRotation)
@@ -234,14 +272,21 @@ class EditorViewController: UIViewController, UIImagePickerControllerDelegate, U
             context.translateBy(x: relCenter.x, y: relCenter.y)
             context.concatenate(matrix)
             context.translateBy(x: -relCenter.x, y: -relCenter.y)
-            let filterResult = layer.bounds
+            
+            
             //Prepare for draw to context:
-            let drawOrigin = CGPoint(x: (relCenter.x - filterResult.size.width*0.5), y: (relCenter.y - filterResult.size.height*0.5))
-            let drawingRect : CGRect = CGRect(origin: drawOrigin, size: filterResult.size)
+            let drawOrigin = CGPoint(x: (relCenter.x - layerBounds.size.width*0.5), y: (relCenter.y - layerBounds.size.height*0.5))
+            let drawingRect : CGRect = CGRect(origin: drawOrigin, size: layerBounds.size)
             
             //Draw to context:
-            image.draw(in: drawingRect)
-            
+            if image != nil{
+                image!.draw(in: drawingRect)
+            }else if textView != nil{
+                let text = textView?.attributedText
+
+                text?.draw(in: drawingRect)
+                //draw(with: drawingRect, options: .truncatesLastVisibleLine, attributes: attrs, context: context)
+            }
             context.restoreGState()
         }
         merge = UIGraphicsGetImageFromCurrentImageContext()
@@ -256,12 +301,12 @@ class EditorViewController: UIViewController, UIImagePickerControllerDelegate, U
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String: Any]){
         if var pickedImage = info[UIImagePickerControllerOriginalImage] as? UIImage{
             pickedImage = pickedImage.fixOrientation()
-            let imv = UIImageViewLayer(image: pickedImage)
-            imv.contentMode = .scaleAspectFit
+            
+            let layer = Layer(image: pickedImage)
             if(layerStack.count > 0){
-                layerStack.newLayer(imv)
+                layerStack.newLayer(layer)
             }else{
-                layerStack.newBackgroundLayer(imv)
+                layerStack.newBackgroundLayer(layer)
             }
         }
         
@@ -358,5 +403,21 @@ extension UIImage {
         
         // And now we just create a new UIImage from the drawing context and return it
         return UIImage(cgImage: ctx.makeImage()!)
+    }
+}
+extension UIPinchGestureRecognizer {
+    func scale(view: UIView) -> (x: CGFloat, y: CGFloat)? {
+        if numberOfTouches > 1 {
+            let touch1 = self.location(ofTouch: 0, in: view)
+            let touch2 = self.location(ofTouch: 1, in: view)
+            let deltaX = abs(touch1.x - touch2.x)
+            let deltaY = abs(touch1.y - touch2.y)
+            let sum = deltaX + deltaY
+            if sum > 0 {
+                let scale = self.scale
+                return (1.0 + (scale - 1.0) * (deltaX / sum), 1.0 + (scale - 1.0) * (deltaY / sum))
+            }
+        }
+        return nil
     }
 }
