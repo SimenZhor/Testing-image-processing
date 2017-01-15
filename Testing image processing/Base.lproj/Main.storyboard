@@ -24,29 +24,33 @@
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="LaS-GD-dCr" customClass="LayerStackUIView" customModule="Testing_image_processing" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="20" width="375" height="603"/>
                                 <subviews>
-                                    <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" barStyle="black" translatesAutoresizingMaskIntoConstraints="NO" id="uhV-dV-5QQ">
+                                    <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="nRy-o3-oTl" userLabel="Remade Toolbar" customClass="CustomToolbar" customModule="Testing_image_processing" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="559" width="375" height="44"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <subviews>
+                                            <imageView tag="1" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" restorationIdentifier="deleteButton" image="Trash" translatesAutoresizingMaskIntoConstraints="NO" id="2G3-sx-r9J" userLabel="Delete Button">
+                                                <rect key="frame" x="162" y="0.0" width="52" height="44"/>
+                                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                            </imageView>
+                                            <imageView contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" restorationIdentifier="tools" image="Settings" translatesAutoresizingMaskIntoConstraints="NO" id="p29-LA-jLd" userLabel="Tools">
+                                                <rect key="frame" x="0.0" y="0.0" width="52" height="44"/>
+                                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                            </imageView>
+                                        </subviews>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                                        <items>
-                                            <barButtonItem systemItem="organize" id="1C1-Gd-GPP"/>
-                                            <barButtonItem style="plain" systemItem="flexibleSpace" id="dp0-kY-npm"/>
-                                            <barButtonItem systemItem="trash" id="FaT-nR-xK2"/>
-                                            <barButtonItem style="plain" systemItem="flexibleSpace" id="wnf-4e-0Rn"/>
-                                            <barButtonItem width="42" style="plain" systemItem="fixedSpace" id="ygd-he-nEv"/>
-                                        </items>
-                                        <color key="barTintColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                                    </toolbar>
-                                    <textView clipsSubviews="YES" clearsContextBeforeDrawing="NO" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" scrollEnabled="NO" usesAttributedText="YES" translatesAutoresizingMaskIntoConstraints="NO" id="yXS-PP-MnW">
-                                        <rect key="frame" x="0.0" y="233" width="375" height="136"/>
+                                    </view>
+                                    <textView clipsSubviews="YES" clearsContextBeforeDrawing="NO" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" scrollEnabled="NO" keyboardDismissMode="onDrag" editable="NO" usesAttributedText="YES" selectable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="yXS-PP-MnW">
+                                        <rect key="frame" x="0.0" y="233" width="375" height="151"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                        <rect key="contentStretch" x="0.0" y="0.0" width="0.0" height="0.0"/>
                                         <attributedString key="attributedText">
-                                            <fragment content="LOREM IPSUM">
+                                            <fragment content="LOREM  IPSUM">
                                                 <attributes>
                                                     <color key="NSBackgroundColor" white="1" alpha="0.0" colorSpace="calibratedWhite"/>
-                                                    <color key="NSColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                                    <color key="NSColor" red="1" green="1" blue="1" alpha="0.1971033653846154" colorSpace="calibratedRGB"/>
                                                     <font key="NSFont" size="50" name="Impact"/>
-                                                    <paragraphStyle key="NSParagraphStyle" alignment="center" lineBreakMode="wordWrapping" baseWritingDirection="natural" tighteningFactorForTruncation="0.0"/>
+                                                    <paragraphStyle key="NSParagraphStyle" alignment="center" lineBreakMode="clipping" baseWritingDirection="natural" tighteningFactorForTruncation="0.0"/>
                                                 </attributes>
                                             </fragment>
                                         </attributedString>
@@ -55,11 +59,6 @@
                                 </subviews>
                                 <color key="backgroundColor" red="0.1215686275" green="0.12941176469999999" blue="0.14117647059999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <gestureRecognizers/>
-                                <constraints>
-                                    <constraint firstAttribute="trailing" secondItem="uhV-dV-5QQ" secondAttribute="trailing" id="N9m-g4-JW2"/>
-                                    <constraint firstAttribute="bottom" secondItem="uhV-dV-5QQ" secondAttribute="bottom" id="ktZ-ZK-yQA"/>
-                                    <constraint firstItem="uhV-dV-5QQ" firstAttribute="leading" secondItem="LaS-GD-dCr" secondAttribute="leading" id="qGP-OH-7mx"/>
-                                </constraints>
                                 <connections>
                                     <outletCollection property="gestureRecognizers" destination="LKr-7m-6hN" appends="YES" id="36k-4N-W3R"/>
                                     <outletCollection property="gestureRecognizers" destination="adS-ri-I4b" appends="YES" id="99d-f0-4l7"/>
@@ -221,7 +220,7 @@
                                         </connections>
                                     </barButtonItem>
                                     <barButtonItem style="plain" systemItem="flexibleSpace" id="0QC-4F-axu"/>
-                                    <barButtonItem image="Download" id="65F-Os-Hcq">
+                                    <barButtonItem systemItem="action" id="65F-Os-Hcq">
                                         <color key="tintColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                         <connections>
                                             <action selector="saveAction:" destination="SeA-GS-5aR" id="aCk-Yr-A23"/>
@@ -294,7 +293,8 @@
         </scene>
     </scenes>
     <resources>
-        <image name="Download" width="25" height="25"/>
+        <image name="Settings" width="25" height="25"/>
+        <image name="Trash" width="25" height="25"/>
     </resources>
     <color key="tintColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
 </document>

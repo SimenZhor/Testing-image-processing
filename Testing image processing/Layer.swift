@@ -35,7 +35,7 @@ extension UITextViewLayer: LayerItem {
 
 class Layer{
 
-    var item: LayerItem
+    var item: UIView
 
     
     public var image: UIImage?{
@@ -59,17 +59,45 @@ class Layer{
         }
         return nil
     }
+    public var textView: UITextViewLayer?{
+        if let txv = item as? UITextViewLayer{
+            return txv
+        }else{
+            print("This is an image layer")
+        }
+        return nil
+    }
+    
+    public var content: UIView{
+        return item
+    }
 
     public var totalRotation: CGFloat{
-        return item.totalRotation
+        if let imv = item as? UIImageViewLayer{
+            return imv.totalRotation
+        }else if let txv = item as? UITextViewLayer{
+            return txv.totalRotation
+        }
+        return CGFloat()
+        
     }
     
     public var totalScaleX: CGFloat{
-        return item.totalScaleX
+        if let imv = item as? UIImageViewLayer{
+            return imv.totalScaleX
+        }else if let txv = item as? UITextViewLayer{
+            return txv.totalScaleX
+        }
+        return CGFloat()
     }
     
     public var totalScaleY: CGFloat{
-        return item.totalScaleY
+        if let imv = item as? UIImageViewLayer{
+            return imv.totalScaleY
+        }else if let txv = item as? UITextViewLayer{
+            return txv.totalScaleY
+        }
+        return CGFloat()
     }
     
     //MARK: Initializers
@@ -78,7 +106,7 @@ class Layer{
             imv.contentMode = .scaleAspectFit
             self.item = imv
         }else{
-            self.item = item as! LayerItem
+            self.item = item
         }
     }
     
@@ -89,7 +117,6 @@ class Layer{
     
     convenience init(text: String){
         let txv = UITextViewLayer(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width-100, height: 100))
-        //txv.text = text
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.alignment = .center
         
@@ -97,15 +124,17 @@ class Layer{
         
         txv.autocapitalizationType = .allCharacters
         txv.backgroundColor = UIColor.clear
-        txv.tintColor = UIColor.clear
+        //txv.tintColor = UIColor.white
         txv.textColor = UIColor.white
         txv.isScrollEnabled = false
         txv.clearsContextBeforeDrawing = false
         txv.contentMode = .scaleToFill
         let attrText = NSMutableAttributedString(string: text, attributes: attrs)
         txv.attributedText = attrText
-        txv.frame.size.height = txv.contentSize.height
-        
+        //txv.frame.size.height = txv.contentSize.height
+        txv.keyboardDismissMode = .interactive
+        txv.translatesAutoresizingMaskIntoConstraints = true
+        txv.resizeToText()
         self.init(txv)
     }
     convenience init(text: String, frame: CGRect){
@@ -117,14 +146,29 @@ class Layer{
     //MARK: Functions
     
     func scaleCenterAndSetParent(to: UIView){
-        item.scaleCenterAndSetParent(to: to)
+        
+        if let imv = item as? UIImageViewLayer{
+            imv.scaleCenterAndSetParent(to: to)
+        }else if let txv = item as? UITextViewLayer{
+            txv.scaleCenterAndSetParent(to: to)
+        }
     }
 
     func scale(xScale: CGFloat, yScale: CGFloat, totScale: CGFloat, border: Bool){
-        item.scale(xScale: xScale, yScale: yScale, totScale: totScale, border: border)
+        
+        if let imv = item as? UIImageViewLayer{
+            imv.scale(xScale: xScale, yScale: yScale, totScale: totScale, border: border)
+        }else if let txv = item as? UITextViewLayer{
+            txv.scale(xScale: xScale, yScale: yScale, totScale: totScale, border: border)
+        }
     }
     func rotate(angle: CGFloat){
-        item.rotate(angle: angle)
+        
+        if let imv = item as? UIImageViewLayer{
+            imv.rotate(angle: angle)
+        }else if let txv = item as? UITextViewLayer{
+            txv.rotate(angle: angle)
+        }
     }
     
 }

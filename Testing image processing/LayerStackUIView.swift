@@ -56,12 +56,21 @@ class LayerStackUIView: UIView {
         return layers[index]
     }
     
+    func getSelectedLayer() -> Layer{
+        return layers[currentSelection]
+    }
+    
     func removeLayer(_ index: Int){
-        _ = layers.remove(atIndex: index)
-        if layers.count>index{
-            selector(index)
-        }else{
-            selector(index-1)
+        if layers.count != 0{
+            let layer = getLayer(index).content
+            for subview in self.subviews{
+                if subview == layer{
+                    subview.removeFromSuperview()
+                }
+            }
+            _ = layers.remove(atIndex: index)
+            currentSelection = index-1
+            selector(currentSelection)
         }
     }
     
@@ -87,14 +96,14 @@ class LayerStackUIView: UIView {
     
     fileprivate func deselector(_ index: Int){
         if layers.count > 0 && index >= 0 && index < layers.count{
-            let view = layers[index].item as! UIView
+            let view = layers[index].item 
             view.layer.borderColor = UIColor(red: 0, green: 0, blue: 0, alpha: 000).cgColor
             view.layer.borderWidth = 0.0
         }
     }
     fileprivate func selector(_ index: Int){
         if layers.count > 0 && index >= 0 && index < layers.count{
-            let view = layers[index].item as! UIView
+            let view = layers[index].item 
             view.layer.borderColor = UIColor(red: 255, green: 0, blue: 0, alpha: 100).cgColor
             view.layer.borderWidth = 1.0/layers[index].totalScaleX
         }

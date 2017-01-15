@@ -10,7 +10,7 @@ import UIKit
 import AVFoundation
 import CoreImage
 
-class EditorViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIGestureRecognizerDelegate, RenderDelegate {
+class EditorViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UIGestureRecognizerDelegate, UITextViewDelegate, RenderDelegate {
     
     @IBOutlet var pan: UIPanGestureRecognizer!
     @IBOutlet var zoom: UIPinchGestureRecognizer!
@@ -21,6 +21,14 @@ class EditorViewController: UIViewController, UIImagePickerControllerDelegate, U
     @IBOutlet weak var layerStack: LayerStackUIView!
     @IBOutlet weak var doneButton: UIBarButtonItem!
     @IBOutlet weak var textButton: UIButton!
+    @IBOutlet weak var deleteButton: UIBarButtonItem!/*{
+        didSet {
+            let icon = #imageLiteral(resourceName: "Download")
+            let iconSize = CGRect(origin: CGPoint.zero, size: icon.size)
+            let iconButton = UIButton(frame: iconSize)
+            deleteButton.customView = iconButton
+        }
+    }*/
     @IBOutlet weak var toolbar: UIToolbar!
     
     let imagePicker = UIImagePickerController()
@@ -40,6 +48,8 @@ class EditorViewController: UIViewController, UIImagePickerControllerDelegate, U
         super.viewDidLoad()
         zoom.isEnabled = true
         imagePicker.delegate = self
+        let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(EditorViewController.dismissKeyboard))
+        view.addGestureRecognizer(tap)
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -78,7 +88,7 @@ class EditorViewController: UIViewController, UIImagePickerControllerDelegate, U
     
     @IBAction func moveAround(_ sender: UIPanGestureRecognizer) {
         currentLayer = layerStack.currentSelection
-        let layer = layerStack.layers[currentLayer].item as! UIView
+        let layer = layerStack.layers[currentLayer].item 
         let translation = sender.translation(in: self.view)
         layer.center = CGPoint(x:layer.center.x + translation.x,
                                 y:layer.center.y + translation.y)
@@ -142,18 +152,27 @@ class EditorViewController: UIViewController, UIImagePickerControllerDelegate, U
     
     @IBAction func newTextLayer(_ sender: UIButton) {
         let layer = Layer(text: "NEW TEXT LAYER")
+        layer.textView?.delegate = self
+        setDoneOnKeyboard(layer.textView!)
         if(layerStack.count > 0){
             layerStack.newLayer(layer)
         }else{
             layerStack.newBackgroundLayer(layer)
         }
+        layer.textView!.becomeFirstResponder()
     }
+    
+    @IBAction func deleteLayer(_ sender: UIBarButtonItem) {
+        deleteButton.highlight()
+        layerStack.removeLayer(layerStack.currentSelection)
+    }
+    
     
     func linkLayers(indexlist: [Int]){
     
     }
 
-    func deleteLayer(index: Int){
+    func unusedDeleteLayer(index: Int){
         
     }
     
@@ -166,7 +185,7 @@ class EditorViewController: UIViewController, UIImagePickerControllerDelegate, U
         layerStack.prepareForMerge()
         
         //klargjør konteksten:
-        let contextElm = layerStack.layers[0].item
+        let contextElm = layerStack.layers[0].item as! LayerItem
         var contextSize = CGSize()
         var contextOrigin = CGPoint()
         var backgroundImage = UIImage()
@@ -204,13 +223,14 @@ class EditorViewController: UIViewController, UIImagePickerControllerDelegate, U
         
         
         //klargjør matriser og skaleringer
-        var matrix = CGAffineTransform()
-        var backgroundRotationMatrix = CGAffineTransform()
-        var backgroundRescaleMatrix = CGAffineTransform()
-        var ownScaleMatrix = CGAffineTransform()
-        var ownRotationMatrix = CGAffineTransform()
         let xScale = layerStack.backgroundTotalScaleX
         let yScale = layerStack.backgroundTotalScaleY
+        var matrix = CGAffineTransform()
+        let backgroundRotationMatrix = CGAffineTransform.init(rotationAngle: -layerStack.backgroundTotalRotation)
+        let backgroundRescaleMatrix = CGAffineTransform.init(scaleX: 1/xScale, y: 1/yScale) //NOTAT: skaleringen her skal være lik skaleringen som blir gjort på bakgrunnen når denne tegnes i konteksten og ikke blir tilført affine-avbildningen
+        var ownScaleMatrix = CGAffineTransform()
+        var ownRotationMatrix = CGAffineTransform()
+        
         
         //behandler resterende layers:
         for i in 1...(layerStack.count-1){ //imageView: Layer! in layerStack.layers{
@@ -222,15 +242,23 @@ class EditorViewController: UIViewController, UIImagePickerControllerDelegate, U
             var textView: UITextViewLayer?
             var relativeCenterX = CGFloat()
             var relativeCenterY = CGFloat()
-            var layerBounds = CGRect()
+            var layerBounds = CGSize()
             
             if let imv = layer.item as? UIImageViewLayer{
                 image = imv.image!
                 relativeCenterX = (imv.center.x - contextOrigin.x)/xScale
                 relativeCenterY = (imv.center.y - contextOrigin.y)/yScale
-                layerBounds = imv.bounds
+                layerBounds = imv.bounds.size
                 
-                if (layer.totalScaleY/yScale) > 1 || (layer.totalScaleX/xScale > 1){
+                //Klargjøring av matriser
+                ownScaleMatrix = CGAffineTransform.init(scaleX: layer.totalScaleX, y: layer.totalScaleY)
+                ownRotationMatrix = CGAffineTransform.init(rotationAngle: layer.totalRotation)
+                
+                matrix = backgroundRescaleMatrix.concatenating(ownScaleMatrix)
+                matrix = matrix.concatenating(ownRotationMatrix)
+                matrix = matrix.concatenating(backgroundRotationMatrix)
+                
+                /*if (layer.totalScaleY/yScale) > 1 || (layer.totalScaleX/xScale > 1){
                     //WARNING about to loose quality
                     let alert = UIAlertController(title: "Warning: Quality loss", message: "You are about to scale the image in layer \(i+1) to a size larger than it's original dimentions (\(layer.image!.size.width)x\(layer.image!.size.height). This will result in a quality loss.)", preferredStyle: .alert)
                     let ok = UIAlertAction(title: "Ok", style: .default, handler: nil)
@@ -242,32 +270,37 @@ class EditorViewController: UIViewController, UIImagePickerControllerDelegate, U
                     alert.addAction(scaleBG)
                     
                     present(alert, animated: true, completion: nil)
-                }
+                }*/
                 
             }else if let txv = layerStack.layers[i].item as? UITextViewLayer{
                 textView = txv
                 relativeCenterX = (txv.center.x - contextOrigin.x)/xScale
                 relativeCenterY = (txv.center.y - contextOrigin.y)/yScale
-                layerBounds = txv.bounds
+                layerBounds = txv.attributedText.size()
+                
+                //Textview er allerede skalert, trenger ikke ownScaleMatrix
+                ownRotationMatrix = CGAffineTransform.init(rotationAngle: layer.totalRotation)
+                
+                
+                matrix = backgroundRescaleMatrix
+                matrix = matrix.concatenating(ownRotationMatrix)
+                matrix = matrix.concatenating(backgroundRotationMatrix)
             }
             
             //Finner center-plasseringen til det manipulerte bildet i forhold til context
-            backgroundRotationMatrix = CGAffineTransform.init(rotationAngle: -layerStack.backgroundTotalRotation)
+            
             
             var relCenter = CGPoint(x: relativeCenterX, y: relativeCenterY)
             relCenter = relCenter.applying(backgroundRotationMatrix)
             
            
             
-            ownScaleMatrix = CGAffineTransform.init(scaleX: layer.totalScaleX, y: layer.totalScaleY)
-            ownRotationMatrix = CGAffineTransform.init(rotationAngle: layer.totalRotation)
-            backgroundRotationMatrix = CGAffineTransform.init(rotationAngle: -layerStack.backgroundTotalRotation)
-            backgroundRescaleMatrix = CGAffineTransform.init(scaleX: 1/xScale, y: 1/yScale) //NOTAT: skaleringen her skal være lik skaleringen som blir gjort på bakgrunnen når denne tegnes i konteksten og ikke blir tilført affine-avbildningen
             
-            matrix = backgroundRescaleMatrix.concatenating(ownScaleMatrix)
-            print("\n\nSkaleringsmatrise layer\(i):\n\(matrix)\n\n")
-            matrix = matrix.concatenating(ownRotationMatrix)
-            matrix = matrix.concatenating(backgroundRotationMatrix)
+            
+            
+            
+            
+            
             
             context.translateBy(x: relCenter.x, y: relCenter.y)
             context.concatenate(matrix)
@@ -275,8 +308,8 @@ class EditorViewController: UIViewController, UIImagePickerControllerDelegate, U
             
             
             //Prepare for draw to context:
-            let drawOrigin = CGPoint(x: (relCenter.x - layerBounds.size.width*0.5), y: (relCenter.y - layerBounds.size.height*0.5))
-            let drawingRect : CGRect = CGRect(origin: drawOrigin, size: layerBounds.size)
+            let drawOrigin = CGPoint(x: (relCenter.x - layerBounds.width*0.5), y: (relCenter.y - layerBounds.height*0.5))
+            let drawingRect : CGRect = CGRect(origin: drawOrigin, size: layerBounds)
             
             //Draw to context:
             if image != nil{
@@ -324,6 +357,41 @@ class EditorViewController: UIViewController, UIImagePickerControllerDelegate, U
                            shouldRecognizeSimultaneouslyWith shouldRecognizeSimultaneouslyWithGestureRecognizer:UIGestureRecognizer) -> Bool {
         return true
     }
+    
+    //MARK: TextViewDelegates
+    
+    func textViewDidChange(_ textView: UITextView) {
+        if let txv = textView as? UITextViewLayer{
+            txv.resizeToText()
+        }
+    }
+    func textViewShouldBeginEditing(_ textView: UITextView) -> Bool {
+        let layer = layerStack.getSelectedLayer().content as? UITextViewLayer
+        if let txv = textView as? UITextViewLayer{
+            if layer == txv{
+                return true
+            }
+        }
+        return false
+    }
+    func textViewDidBeginEditing(_ textView: UITextView) {
+        
+    }
+    func setDoneOnKeyboard(_ textView: UITextViewLayer) {
+        let keyboardToolbar = UIToolbar()
+        keyboardToolbar.sizeToFit()
+        let flexBarButton = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
+        let doneBarButton = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(EditorViewController.dismissKeyboard))
+        keyboardToolbar.items = [flexBarButton, doneBarButton]
+        textView.inputAccessoryView = keyboardToolbar
+    }
+    
+    //Calls this function when the tap is recognized.
+    func dismissKeyboard() {
+        //Causes the view (or one of its embedded text fields) to resign the first responder status.
+        view.endEditing(true)
+    }
+
     
     //MARK:Navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -419,5 +487,20 @@ extension UIPinchGestureRecognizer {
             }
         }
         return nil
+    }
+}
+
+extension UIBarButtonItem{
+    func highlight(){
+        let matrix = CGAffineTransform.init(scaleX: 1.5, y: 1.5)
+        
+        UIView.animate(withDuration: 1, delay: 0, usingSpringWithDamping: 0.5, initialSpringVelocity: 10, options: .curveEaseIn, animations: { () -> Void in
+            //self.customView!.transform = matrix
+        }, completion: { (finished: Bool) -> Void in
+            
+            print("Highlighted")
+            
+        })
+        
     }
 }

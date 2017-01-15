@@ -55,8 +55,8 @@ class UIImageViewLayer: UIImageView{
     func scale(xScale: CGFloat, yScale: CGFloat, totScale: CGFloat, border: Bool){
         
         self.transform = self.transform.scaledBy(x: totScale, y: totScale)
-        self.totalScaleX *= xScale
-        self.totalScaleY *= yScale
+        self.totalScaleX *= totScale//xScale
+        self.totalScaleY *= totScale//yScale
         if border{
             self.layer.borderWidth = 1.0/self.totalScaleX
         }
