@@ -171,4 +171,20 @@ class Layer{
         }
     }
     
+    func createReduceToCircleAnimation(fromValue: CGPath, center: CGPoint) ->CABasicAnimation{
+        let radius = min(item.bounds.width/2, item.bounds.height/2)
+        let circle = UIBezierPath(ovalIn: CGRect(x: center.x-radius/2, y: center.y-radius/2, width: radius, height: radius)).cgPath 
+        let animation = CABasicAnimation(keyPath: "path")
+        
+        animation.fromValue = fromValue
+        animation.toValue = circle
+        animation.duration = 0.2
+        animation.timingFunction = CAMediaTimingFunction.init(name: kCAMediaTimingFunctionEaseOut)
+        animation.fillMode = kCAFillModeBoth
+        animation.isRemovedOnCompletion = false
+        
+        return animation
+        
+    }
+    
 }

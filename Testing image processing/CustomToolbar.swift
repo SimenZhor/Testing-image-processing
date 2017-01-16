@@ -14,6 +14,7 @@ class CustomToolbar: UIView {
     var deleteButton = UIImageView()
     
     
+    
     override func awakeFromNib() {
         setup()
     }
@@ -47,10 +48,11 @@ class CustomToolbar: UIView {
     
     
     func deleteLayer(_ sender: UIGestureRecognizer){
-        print("tapped")
-        let layerStack = superview as! LayerStackUIView
-        layerStack.removeLayer(layerStack.currentSelection)
         
+        let layerStack = superview as! LayerStackUIView
+        if layerStack.count > 0 {
+            layerStack.removeLayer(layerStack.currentSelection)
+        }
         /*let matrix = CGAffineTransform.init(scaleX: 1.5, y: 1.5)
         
         
@@ -68,7 +70,7 @@ class CustomToolbar: UIView {
         let scaleAnimation = CASpringAnimation(keyPath: "transform.scale")
         scaleAnimation.duration = 0.5//scaleAnimation.settlingDuration
         scaleAnimation.fromValue = 1
-        scaleAnimation.toValue = 1.5
+        scaleAnimation.toValue = 1.3
         scaleAnimation.timingFunction = CAMediaTimingFunction(name: kCAMediaTimingFunctionEaseIn)
         scaleAnimation.autoreverses = true
         scaleAnimation.damping = 1.5
@@ -81,7 +83,7 @@ class CustomToolbar: UIView {
         let opacityAnimation = CABasicAnimation(keyPath: "opacity")
         
         
-        opacityAnimation.duration = 0.2
+        opacityAnimation.duration = 0.5
         opacityAnimation.fromValue = 0
         opacityAnimation.toValue = 1
         
@@ -91,8 +93,12 @@ class CustomToolbar: UIView {
     func createBlurLayer(below: UIView){
         
         let blur = UIBlurEffect(style: .light)
+        let vibrancy = UIVibrancyEffect(blurEffect: blur)
         let blurView = UIVisualEffectView(effect: blur)
-        blurView.frame = below.bounds//UIScreen.main.bounds
+        let vibrancyView = UIVisualEffectView(effect: vibrancy)
+        blurView.frame = below.bounds
+        vibrancyView.frame = below.bounds
+        
         
         let sublayer = blurView.layer
         sublayer.backgroundColor = UIColor.clear.cgColor
@@ -104,7 +110,11 @@ class CustomToolbar: UIView {
         mask.path = maskPath.cgPath
         sublayer.mask = mask
         
-        blurView.center = self.convert(deleteButton.center, to: superview!)
+        blurView.center = self.convert(below.center, to: superview!)
+        blurView.tag = 3
+        
+        
+        blurView.contentView.addSubview(vibrancyView)
         
         superview?.addSubview(blurView)
         superview?.bringSubview(toFront: self)

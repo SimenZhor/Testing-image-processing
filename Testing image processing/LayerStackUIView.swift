@@ -61,7 +61,7 @@ class LayerStackUIView: UIView {
     }
     
     func removeLayer(_ index: Int){
-        if layers.count != 0{
+        if layers.count > 0{
             let layer = getLayer(index).content
             for subview in self.subviews{
                 if subview == layer{
@@ -71,6 +71,7 @@ class LayerStackUIView: UIView {
             _ = layers.remove(atIndex: index)
             currentSelection = index-1
             selector(currentSelection)
+            print("layer removed")
         }
     }
     

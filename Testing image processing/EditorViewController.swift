@@ -33,6 +33,8 @@ class EditorViewController: UIViewController, UIImagePickerControllerDelegate, U
     var tempoverlay: UIImage!
     var currentLayer = 0
     
+    var ppos: CGPoint?
+    
     override func viewWillAppear(_ animated: Bool) {
         self.navigationController?.isNavigationBarHidden = true
         self.toolbar.setBackgroundImage(UIImage(), forToolbarPosition: .any, barMetrics: .default)
@@ -94,14 +96,42 @@ class EditorViewController: UIViewController, UIImagePickerControllerDelegate, U
         }else if pan.state == .changed{
         
         
-        let translation = sender.translation(in: self.view)
-        layer.center = CGPoint(x:layer.center.x + translation.x,
-                                y:layer.center.y + translation.y)
-        sender.setTranslation(CGPoint.zero, in: self.view)
+            let translation = sender.translation(in: self.view)
+            layer.center = CGPoint(x:layer.center.x + translation.x,
+                                   y:layer.center.y + translation.y)
+            if ppos != nil{
+                
+                if deleteButton.frame.contains(pan.location(in: remadeToolbar)) && !deleteButton.frame.contains(ppos!){
+                    //tap gesture is now within deletebutton radius, previous touch was not
+                    let masklayer = CAShapeLayer()
+                    masklayer.frame = layer.frame
+                    layer.layer.mask = masklayer
+                    masklayer.path = UIBezierPath(rect: CGRect(x: 0, y: 0, width: layer.bounds.width, height: layer.bounds.height)).cgPath
+                    
+                    print(pan.location(in: layer))
+                    let animation = layerStack.layers[currentLayer].createReduceToCircleAnimation(fromValue: masklayer.path!, center: pan.location(in: layer))
+                    
+                    masklayer.add(animation, forKey: "path")
+                    
+                }else if !deleteButton.frame.contains(pan.location(in: remadeToolbar)) && deleteButton.frame.contains(ppos!){
+                    //tap gesture has been moved away from deletebutton
+                    layer.layer.mask = nil
+                }
+            }
+            ppos = pan.location(in: remadeToolbar)
+            sender.setTranslation(CGPoint.zero, in: self.view)
         }else if pan.state == .ended{
-            deleteButton.layer.sublayers?.removeAll()
-            if deleteButton.bounds.contains(pan.translation(in: deleteButton)){
+           
+            for sub in layerStack.subviews{
+                
+                if sub.tag == 3{
+                    sub.removeFromSuperview()
+                }
+            }
+            
+            if deleteButton.frame.contains(pan.location(in: remadeToolbar)){
                 remadeToolbar.deleteLayer(sender)
+                
             }
         }
     }
