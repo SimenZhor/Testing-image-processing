@@ -15,21 +15,16 @@ class EditorViewController: UIViewController, UIImagePickerControllerDelegate, U
     @IBOutlet var pan: UIPanGestureRecognizer!
     @IBOutlet var zoom: UIPinchGestureRecognizer!
     @IBOutlet var rotate: UIRotationGestureRecognizer!
+    @IBOutlet var longPress: UILongPressGestureRecognizer!
     @IBOutlet weak var newLayerButton: UIBarButtonItem!
     @IBOutlet weak var nextLayerButton: UIBarButtonItem!
     @IBOutlet weak var prevLayerButton: UIBarButtonItem!
     @IBOutlet weak var layerStack: LayerStackUIView!
     @IBOutlet weak var doneButton: UIBarButtonItem!
     @IBOutlet weak var textButton: UIButton!
-    @IBOutlet weak var deleteButton: UIBarButtonItem!/*{
-        didSet {
-            let icon = #imageLiteral(resourceName: "Download")
-            let iconSize = CGRect(origin: CGPoint.zero, size: icon.size)
-            let iconButton = UIButton(frame: iconSize)
-            deleteButton.customView = iconButton
-        }
-    }*/
+    @IBOutlet weak var deleteButton: UIImageView!
     @IBOutlet weak var toolbar: UIToolbar!
+    @IBOutlet weak var remadeToolbar: CustomToolbar!
     
     let imagePicker = UIImagePickerController()
     var bg: UIImage!
@@ -48,6 +43,8 @@ class EditorViewController: UIViewController, UIImagePickerControllerDelegate, U
         super.viewDidLoad()
         zoom.isEnabled = true
         imagePicker.delegate = self
+        
+        
         let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(EditorViewController.dismissKeyboard))
         view.addGestureRecognizer(tap)
     }
@@ -88,13 +85,29 @@ class EditorViewController: UIViewController, UIImagePickerControllerDelegate, U
     
     @IBAction func moveAround(_ sender: UIPanGestureRecognizer) {
         currentLayer = layerStack.currentSelection
-        let layer = layerStack.layers[currentLayer].item 
+        let layer = layerStack.layers[currentLayer].item
+        
+        if pan.state == .began{
+            let scaleAnimation = remadeToolbar.createSpringScaleAnimation()
+            remadeToolbar.createBlurLayer(below: deleteButton)
+            deleteButton.layer.add(scaleAnimation, forKey: "transform.scale")
+        }else if pan.state == .changed{
+        
+        
         let translation = sender.translation(in: self.view)
         layer.center = CGPoint(x:layer.center.x + translation.x,
                                 y:layer.center.y + translation.y)
-        //layer?.absOrigin.x += translation.x
-        //layer?.absOrigin.y += translation.y
         sender.setTranslation(CGPoint.zero, in: self.view)
+        }else if pan.state == .ended{
+            deleteButton.layer.sublayers?.removeAll()
+            if deleteButton.bounds.contains(pan.translation(in: deleteButton)){
+                remadeToolbar.deleteLayer(sender)
+            }
+        }
+    }
+    
+    @IBAction func longPressActivateDelete(_ sender: UILongPressGestureRecognizer) {
+        
     }
     
 
@@ -148,6 +161,7 @@ class EditorViewController: UIViewController, UIImagePickerControllerDelegate, U
         imagePicker.sourceType = .photoLibrary
         
         self.present(imagePicker, animated: true, completion: nil)
+        layerStack.bringSubview(toFront: remadeToolbar)
     }
     
     @IBAction func newTextLayer(_ sender: UIButton) {
@@ -160,12 +174,9 @@ class EditorViewController: UIViewController, UIImagePickerControllerDelegate, U
             layerStack.newBackgroundLayer(layer)
         }
         layer.textView!.becomeFirstResponder()
+        layerStack.bringSubview(toFront: remadeToolbar)
     }
     
-    @IBAction func deleteLayer(_ sender: UIBarButtonItem) {
-        deleteButton.highlight()
-        layerStack.removeLayer(layerStack.currentSelection)
-    }
     
     
     func linkLayers(indexlist: [Int]){
@@ -342,7 +353,7 @@ class EditorViewController: UIViewController, UIImagePickerControllerDelegate, U
                 layerStack.newBackgroundLayer(layer)
             }
         }
-        
+        layerStack.bringSubview(toFront: remadeToolbar)
         dismiss(animated: true, completion: nil)
         
     }

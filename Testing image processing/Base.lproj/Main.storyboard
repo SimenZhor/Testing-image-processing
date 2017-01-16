@@ -24,20 +24,33 @@
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="LaS-GD-dCr" customClass="LayerStackUIView" customModule="Testing_image_processing" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="20" width="375" height="603"/>
                                 <subviews>
-                                    <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="nRy-o3-oTl" userLabel="Remade Toolbar" customClass="CustomToolbar" customModule="Testing_image_processing" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="559" width="375" height="44"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="nRy-o3-oTl" userLabel="Remade Toolbar" customClass="CustomToolbar" customModule="Testing_image_processing" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="551" width="375" height="52"/>
                                         <subviews>
-                                            <imageView tag="1" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" restorationIdentifier="deleteButton" image="Trash" translatesAutoresizingMaskIntoConstraints="NO" id="2G3-sx-r9J" userLabel="Delete Button">
-                                                <rect key="frame" x="162" y="0.0" width="52" height="44"/>
-                                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                            <imageView tag="1" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" restorationIdentifier="deleteButton" image="Trash" translatesAutoresizingMaskIntoConstraints="NO" id="2G3-sx-r9J" userLabel="Delete Button">
+                                                <rect key="frame" x="162" y="0.0" width="52" height="52"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="width" constant="52" id="4ME-fa-hkW"/>
+                                                    <constraint firstAttribute="height" constant="52" id="m4e-eW-oYx"/>
+                                                </constraints>
                                             </imageView>
-                                            <imageView contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" restorationIdentifier="tools" image="Settings" translatesAutoresizingMaskIntoConstraints="NO" id="p29-LA-jLd" userLabel="Tools">
-                                                <rect key="frame" x="0.0" y="0.0" width="52" height="44"/>
-                                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                            <imageView contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" restorationIdentifier="tools" image="Settings" translatesAutoresizingMaskIntoConstraints="NO" id="p29-LA-jLd" userLabel="Tools">
+                                                <rect key="frame" x="0.0" y="0.0" width="52" height="52"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="width" constant="52" id="8K8-XB-kz8"/>
+                                                    <constraint firstAttribute="height" constant="52" id="fOD-tX-qGa"/>
+                                                </constraints>
                                             </imageView>
                                         </subviews>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                        <constraints>
+                                            <constraint firstItem="p29-LA-jLd" firstAttribute="leading" secondItem="nRy-o3-oTl" secondAttribute="leading" id="Q3h-6n-bq0"/>
+                                            <constraint firstAttribute="bottom" secondItem="2G3-sx-r9J" secondAttribute="bottom" id="QDE-7v-9Ql"/>
+                                            <constraint firstAttribute="bottom" secondItem="p29-LA-jLd" secondAttribute="bottom" id="Z8k-lk-3FH"/>
+                                            <constraint firstItem="2G3-sx-r9J" firstAttribute="top" secondItem="nRy-o3-oTl" secondAttribute="top" id="mdd-NN-RQh"/>
+                                            <constraint firstItem="p29-LA-jLd" firstAttribute="top" secondItem="nRy-o3-oTl" secondAttribute="top" id="uqZ-Wi-QWh"/>
+                                            <constraint firstItem="2G3-sx-r9J" firstAttribute="centerX" secondItem="nRy-o3-oTl" secondAttribute="centerX" id="vpO-sF-Crh"/>
+                                        </constraints>
                                     </view>
                                     <textView clipsSubviews="YES" clearsContextBeforeDrawing="NO" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" scrollEnabled="NO" keyboardDismissMode="onDrag" editable="NO" usesAttributedText="YES" selectable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="yXS-PP-MnW">
                                         <rect key="frame" x="0.0" y="233" width="375" height="151"/>
@@ -59,10 +72,16 @@
                                 </subviews>
                                 <color key="backgroundColor" red="0.1215686275" green="0.12941176469999999" blue="0.14117647059999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <gestureRecognizers/>
+                                <constraints>
+                                    <constraint firstAttribute="bottom" secondItem="nRy-o3-oTl" secondAttribute="bottom" id="9iu-8G-nKQ"/>
+                                    <constraint firstItem="nRy-o3-oTl" firstAttribute="leading" secondItem="LaS-GD-dCr" secondAttribute="leading" id="PTO-rA-O0b"/>
+                                    <constraint firstAttribute="trailing" secondItem="nRy-o3-oTl" secondAttribute="trailing" id="mTW-Aq-WSq"/>
+                                </constraints>
                                 <connections>
                                     <outletCollection property="gestureRecognizers" destination="LKr-7m-6hN" appends="YES" id="36k-4N-W3R"/>
                                     <outletCollection property="gestureRecognizers" destination="adS-ri-I4b" appends="YES" id="99d-f0-4l7"/>
                                     <outletCollection property="gestureRecognizers" destination="HvC-eh-h3b" appends="YES" id="zrF-Bs-noD"/>
+                                    <outletCollection property="gestureRecognizers" destination="uvB-tG-9Jn" appends="YES" id="Hyb-lK-IfS"/>
                                 </connections>
                             </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="IkG-oL-nId" userLabel="System Statusbar background">
@@ -151,12 +170,15 @@
                     <navigationItem key="navigationItem" id="gxl-WD-Xlg"/>
                     <simulatedStatusBarMetrics key="simulatedStatusBarMetrics" statusBarStyle="lightContent"/>
                     <connections>
+                        <outlet property="deleteButton" destination="2G3-sx-r9J" id="5bT-nS-Rgx"/>
                         <outlet property="doneButton" destination="9x5-Rp-tR6" id="8A5-b8-mdp"/>
                         <outlet property="layerStack" destination="LaS-GD-dCr" id="2q5-km-qMn"/>
+                        <outlet property="longPress" destination="uvB-tG-9Jn" id="lcN-hC-1Or"/>
                         <outlet property="newLayerButton" destination="r0d-xf-kYc" id="VrC-53-ULs"/>
                         <outlet property="nextLayerButton" destination="CDZ-az-3iD" id="f0Q-4H-mid"/>
                         <outlet property="pan" destination="HvC-eh-h3b" id="APP-x2-7kZ"/>
                         <outlet property="prevLayerButton" destination="EEu-3f-jMk" id="xp3-yj-42R"/>
+                        <outlet property="remadeToolbar" destination="nRy-o3-oTl" id="U6G-4z-hdK"/>
                         <outlet property="rotate" destination="adS-ri-I4b" id="3SG-0x-aeB"/>
                         <outlet property="textButton" destination="5ts-aH-9JI" id="fDO-fe-l5z"/>
                         <outlet property="toolbar" destination="tCw-pP-yHg" id="Cfe-iS-ICW"/>
@@ -182,6 +204,11 @@
                         <outlet property="delegate" destination="BYZ-38-t0r" id="Jr2-uH-ykf"/>
                     </connections>
                 </panGestureRecognizer>
+                <pongPressGestureRecognizer allowableMovement="10" minimumPressDuration="0.5" id="uvB-tG-9Jn">
+                    <connections>
+                        <action selector="longPressActivateDelete:" destination="BYZ-38-t0r" id="0Lx-oK-Dv3"/>
+                    </connections>
+                </pongPressGestureRecognizer>
             </objects>
             <point key="canvasLocation" x="3120.8000000000002" y="428.63568215892059"/>
         </scene>

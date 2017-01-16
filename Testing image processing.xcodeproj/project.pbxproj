@@ -19,7 +19,7 @@
 		F19C44251D29C14200457630 /* Testing_image_processingUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F19C44241D29C14200457630 /* Testing_image_processingUITests.swift */; };
 		F19C44331D29D71900457630 /* uiimageextension.swift in Sources */ = {isa = PBXBuildFile; fileRef = F19C44321D29D71900457630 /* uiimageextension.swift */; };
 		F1A07B1A1D2A619600EB6983 /* LayerStackUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1A07B191D2A619600EB6983 /* LayerStackUIView.swift */; };
-		F1A07B1C1D2A662600EB6983 /* Toolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1A07B1B1D2A662600EB6983 /* Toolbar.swift */; };
+		F1A07B1C1D2A662600EB6983 /* CustomToolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1A07B1B1D2A662600EB6983 /* CustomToolbar.swift */; };
 		F1B11D2F1E1EF18A00283BFF /* UIImageViewLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1B11D2E1E1EF18A00283BFF /* UIImageViewLayer.swift */; };
 		F1C1A5FB1E23934200BF48F7 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F1C1A5F91E23934200BF48F7 /* Main.storyboard */; };
 		F1C1A5FD1E23C8BC00BF48F7 /* LinkedList.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1C1A5FC1E23C8BC00BF48F7 /* LinkedList.swift */; };
@@ -62,7 +62,7 @@
 		F19C44261D29C14200457630 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		F19C44321D29D71900457630 /* uiimageextension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = uiimageextension.swift; sourceTree = "<group>"; };
 		F1A07B191D2A619600EB6983 /* LayerStackUIView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LayerStackUIView.swift; sourceTree = "<group>"; };
-		F1A07B1B1D2A662600EB6983 /* Toolbar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Toolbar.swift; sourceTree = "<group>"; };
+		F1A07B1B1D2A662600EB6983 /* CustomToolbar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomToolbar.swift; sourceTree = "<group>"; };
 		F1B11D2E1E1EF18A00283BFF /* UIImageViewLayer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIImageViewLayer.swift; sourceTree = "<group>"; };
 		F1C1A5FA1E23934200BF48F7 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		F1C1A5FC1E23C8BC00BF48F7 /* LinkedList.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LinkedList.swift; sourceTree = "<group>"; };
@@ -126,7 +126,7 @@
 				F1347BEF1E250D8A00E1784C /* Layer.swift */,
 				F1B11D2E1E1EF18A00283BFF /* UIImageViewLayer.swift */,
 				F1347BF41E25612300E1784C /* UITextViewLayer.swift */,
-				F1A07B1B1D2A662600EB6983 /* Toolbar.swift */,
+				F1A07B1B1D2A662600EB6983 /* CustomToolbar.swift */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -332,7 +332,7 @@
 				F1B11D2F1E1EF18A00283BFF /* UIImageViewLayer.swift in Sources */,
 				F1C42E551E2268750016CC7E /* RenderViewController.swift in Sources */,
 				F1347BF51E25612300E1784C /* UITextViewLayer.swift in Sources */,
-				F1A07B1C1D2A662600EB6983 /* Toolbar.swift in Sources */,
+				F1A07B1C1D2A662600EB6983 /* CustomToolbar.swift in Sources */,
 				F1347BF01E250D8A00E1784C /* Layer.swift in Sources */,
 				F19C44331D29D71900457630 /* uiimageextension.swift in Sources */,
 				F19C44051D29C14200457630 /* AppDelegate.swift in Sources */,
