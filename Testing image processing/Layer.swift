@@ -172,8 +172,13 @@ class Layer{
     }
     
     func createReduceToCircleAnimation(fromValue: CGPath, center: CGPoint) ->CABasicAnimation{
-        let radius = min(item.bounds.width/2, item.bounds.height/2)
-        let circle = UIBezierPath(ovalIn: CGRect(x: center.x-radius/2, y: center.y-radius/2, width: radius, height: radius)).cgPath 
+        let it = item as! LayerItem
+        let shortestDist = min(item.bounds.width/2, item.bounds.height/2)
+        let radius = min(shortestDist,100/it.totalScaleX)
+        print("shortestDist: \(shortestDist)")
+//        let radius = CGFloat(100/it.totalScaleX)
+        print("radius: ",radius)
+        let circle = CGPath(ellipseIn: SquareAroundCircle(center, radius: radius), transform: nil)
         let animation = CABasicAnimation(keyPath: "path")
         
         animation.fromValue = fromValue
@@ -185,6 +190,11 @@ class Layer{
         
         return animation
         
+    }
+    
+    private func SquareAroundCircle(_ center: CGPoint, radius: CGFloat) -> CGRect {
+        assert(0 <= radius, "radius must be a positive value")
+        return CGRect(origin: center, size: CGSize.zero).insetBy(dx: -radius, dy: -radius)
     }
     
 }

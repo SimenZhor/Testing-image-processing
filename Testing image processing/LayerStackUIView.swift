@@ -11,7 +11,7 @@ import UIKit
 class LayerStackUIView: UIView {
     
     var layers: LinkedList<Layer> = LinkedList<Layer>()
-    var currentSelection = 0
+    var currentSelection = -1
     var backgroundSize: CGSize = CGSize.zero
     var backgroundTotalScaleX: CGFloat = 1
     var backgroundTotalScaleY: CGFloat = 1
@@ -22,6 +22,7 @@ class LayerStackUIView: UIView {
     
     func newBackgroundLayer(_ layer: Layer){
         backgroundSize = (layer.image?.size)!
+        currentSelection = 0
         newLayer(layer)
         //TODO: flytt layer til index 0 i stacken hvis det allerede eksisterer layers. Trenger en metode for flytting av layers uansett
         
