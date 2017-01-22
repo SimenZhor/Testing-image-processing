@@ -44,6 +44,12 @@ class EditorViewController: UIViewController, UIImagePickerControllerDelegate, U
         let rect = CGRect(origin: remadeToolbar.frame.origin, size: itemsize)
         let toolsmenu = ExpandingMenuButton(frame: rect, centerImage: #imageLiteral(resourceName: "Settings"), centerHighlightedImage: #imageLiteral(resourceName: "Settings"))
         self.layerStack.addSubview(toolsmenu)
+        
+        toolsmenu.translatesAutoresizingMaskIntoConstraints = false
+        //toolsmenu.leadingAnchor.constraint(equalTo: layerStack.leadingAnchor)
+        //toolsmenu.bottomAnchor.constraint(equalTo: layerStack.bottomAnchor)
+        //layerStack.addConstraints([NSLayoutConstraint.init(item: toolsmenu.superview!, attribute: .bottom, relatedBy: .equal, toItem: toolsmenu, attribute: .bottom, multiplier: 1, constant: 0),NSLayoutConstraint.init(item: toolsmenu.superview!, attribute: .leading, relatedBy: .equal, toItem: toolsmenu, attribute: .leading, multiplier: 1, constant: 0)])
+        
         toolsmenu.expandingDirection = .top
         toolsmenu.menuTitleDirection = .right
         
@@ -62,6 +68,8 @@ class EditorViewController: UIViewController, UIImagePickerControllerDelegate, U
         toolsmenu.addMenuItems([eraseBG, unlinkAll, linkLayers,rearrangeLayers])
                 
     }
+    
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
