@@ -51,7 +51,7 @@ open class ExpandingMenuButton: UIView, UIGestureRecognizerDelegate {
     open var menuTitleDirection: MenuTitleDirection = MenuTitleDirection.left
     
     open var enabledExpandingAnimations: AnimationOptions = .Default
-    open var enabledFoldingAnimations: AnimationOptions = .Default
+    open var enabledFoldingAnimations: AnimationOptions = .All
     
     open var willPresentMenuItems: ((ExpandingMenuButton) -> Void)?
     open var didPresentMenuItems: ((ExpandingMenuButton) -> Void)?
@@ -230,6 +230,10 @@ open class ExpandingMenuButton: UIView, UIGestureRecognizerDelegate {
             
             let foldAnimation: CAAnimationGroup = self.makeFoldAnimation(startingPoint: item.center, backwardPoint: backwardPoint, endPoint: self.centerButton.center)
             
+            if self.enabledFoldingAnimations.contains(.MenuItemFade){
+                item.layer.opacity = 0
+            }
+            
             item.layer.add(foldAnimation, forKey: "foldAnimation")
             item.center = self.centerButton.center
             
@@ -326,10 +330,10 @@ open class ExpandingMenuButton: UIView, UIGestureRecognizerDelegate {
             path.addLine(to: CGPoint(x: startingPoint.x, y: startingPoint.y))
             
             movingAnimation.keyTimes = [0.0, 0.3, 0.5, 1.0]
-        } else if self.enabledFoldingAnimations.contains(.MenuItemFade) {
+        } /*else if self.enabledFoldingAnimations.contains(.MenuItemFade) {
             path.move(to: CGPoint(x: startingPoint.x, y: startingPoint.y))
             path.addLine(to: CGPoint(x: startingPoint.x, y: startingPoint.y))
-        }
+        }*/
         
         movingAnimation.path = path
         movingAnimation.duration = 0.35
@@ -340,7 +344,7 @@ open class ExpandingMenuButton: UIView, UIGestureRecognizerDelegate {
         //
         if self.enabledFoldingAnimations.contains(.MenuItemFade) {
             let fadeAnimation = CAKeyframeAnimation(keyPath: "opacity")
-            fadeAnimation.values = [1.0, 0.0]
+            fadeAnimation.values = [1.0, 0.75, 0.0]
             fadeAnimation.keyTimes = [0.0, 0.75, 1.0]
             fadeAnimation.duration = 0.35
             animationGroup.animations?.append(fadeAnimation)

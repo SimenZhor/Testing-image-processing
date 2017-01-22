@@ -46,6 +46,7 @@ class EditorViewController: UIViewController, UIImagePickerControllerDelegate, U
         self.layerStack.addSubview(toolsmenu)
         toolsmenu.expandingDirection = .top
         toolsmenu.menuTitleDirection = .right
+        toolsmenu.tag = 0
         
         let linkLayers = ExpandingMenuItem(size: itemsize, title: "Link Layers", titleColor: UIColor.white, image: #imageLiteral(resourceName: "Link"), highlightedImage: #imageLiteral(resourceName: "Link"), backgroundImage: nil, backgroundHighlightedImage: nil, itemTapped: {() -> Void in
             self.linkLayers(indexlist: [0,1])
@@ -62,12 +63,20 @@ class EditorViewController: UIViewController, UIImagePickerControllerDelegate, U
         toolsmenu.addMenuItems([eraseBG, unlinkAll, linkLayers,rearrangeLayers])
                 
     }
+
     
     override func viewDidLoad() {
         super.viewDidLoad()
         zoom.isEnabled = true
         imagePicker.delegate = self
         
+        for sub in layerStack.subviews{
+            if let button = sub as? ExpandingMenuButton{
+                button.leadingAnchor.constraint(equalTo: layerStack.leadingAnchor)
+                button.bottomAnchor.constraint(equalTo: layerStack.bottomAnchor)
+                button.centerYAnchor.constraint(equalTo: deleteButton.centerYAnchor)
+            }
+        }
         
         let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(EditorViewController.dismissKeyboard))
         view.addGestureRecognizer(tap)
