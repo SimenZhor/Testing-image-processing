@@ -39,6 +39,28 @@ class EditorViewController: UIViewController, UIImagePickerControllerDelegate, U
         self.navigationController?.isNavigationBarHidden = true
         self.toolbar.setBackgroundImage(UIImage(), forToolbarPosition: .any, barMetrics: .default)
         self.toolbar.setShadowImage(UIImage(), forToolbarPosition: .any)
+        
+        let itemsize = CGSize(width: 52, height: 52)
+        let rect = CGRect(origin: remadeToolbar.frame.origin, size: itemsize)
+        let toolsmenu = ExpandingMenuButton(frame: rect, centerImage: #imageLiteral(resourceName: "Settings"), centerHighlightedImage: #imageLiteral(resourceName: "Settings"))
+        self.layerStack.addSubview(toolsmenu)
+        toolsmenu.expandingDirection = .top
+        toolsmenu.menuTitleDirection = .right
+        
+        let linkLayers = ExpandingMenuItem(size: itemsize, title: "Link Layers", titleColor: UIColor.white, image: #imageLiteral(resourceName: "Link"), highlightedImage: #imageLiteral(resourceName: "Link"), backgroundImage: nil, backgroundHighlightedImage: nil, itemTapped: {() -> Void in
+            self.linkLayers(indexlist: [0,1])
+        })
+        let unlinkAll = ExpandingMenuItem(size: itemsize, title: "Unlink All", titleColor: UIColor.white, image: #imageLiteral(resourceName: "Unlink"), highlightedImage: #imageLiteral(resourceName: "Unlink"), backgroundImage: nil, backgroundHighlightedImage: nil, itemTapped: {() -> Void in
+            self.linkLayers(indexlist: [0,1])
+        })
+        let eraseBG = ExpandingMenuItem(size: itemsize, title: "Eraser", titleColor: UIColor.white, image: #imageLiteral(resourceName: "Erase"), highlightedImage: #imageLiteral(resourceName: "Erase"), backgroundImage: nil, backgroundHighlightedImage: nil, itemTapped: {() -> Void in
+            self.linkLayers(indexlist: [0,1])
+        })
+        let rearrangeLayers = ExpandingMenuItem(size: itemsize, title: "Rearrange Layers", titleColor: UIColor.white, image: #imageLiteral(resourceName: "Rearrange"), highlightedImage: #imageLiteral(resourceName: "Rearrange"), backgroundImage: nil, backgroundHighlightedImage: nil, itemTapped: {() -> Void in
+            self.linkLayers(indexlist: [0,1])
+        })
+        toolsmenu.addMenuItems([eraseBG, unlinkAll, linkLayers,rearrangeLayers])
+                
     }
     
     override func viewDidLoad() {

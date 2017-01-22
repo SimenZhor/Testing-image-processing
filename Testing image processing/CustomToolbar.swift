@@ -10,7 +10,7 @@ import UIKit
 
 class CustomToolbar: UIView {
 
-    var toolsButton = UIImageView()
+    //var toolsButton = ExpandingMenuButton(centerImage: #imageLiteral(resourceName: "Settings"), centerHighlightedImage: #imageLiteral(resourceName: "Settings"))
     var deleteButton = UIImageView()
     
     
@@ -32,8 +32,8 @@ class CustomToolbar: UIView {
         for sub in subviews{
             
             if sub.tag == 0{
-                toolsButton = sub as! UIImageView
-                toolsButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(CustomToolbar.expandToolsMenu(_:))))
+                //toolsButton = sub as! ExpandingMenuButton
+                //toolsButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(CustomToolbar.expandToolsMenu(_:))))
             }else if sub.tag == 1{
                 deleteButton = sub as! UIImageView
                 let tap = UITapGestureRecognizer(target: self, action: #selector(CustomToolbar.deleteLayer(_:)))

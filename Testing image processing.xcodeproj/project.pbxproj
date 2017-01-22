@@ -11,6 +11,8 @@
 		F1347BF21E2512EC00E1784C /* Impact.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F1347BF11E2512EC00E1784C /* Impact.ttf */; };
 		F1347BF51E25612300E1784C /* UITextViewLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1347BF41E25612300E1784C /* UITextViewLayer.swift */; };
 		F135A4BC1E22EA1300D974BC /* ReverseShowSegue.swift in Sources */ = {isa = PBXBuildFile; fileRef = F135A4BB1E22EA1300D974BC /* ReverseShowSegue.swift */; };
+		F13625331E34CE1A00ED545E /* ExpandingMenuButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = F13625321E34CE1A00ED545E /* ExpandingMenuButton.swift */; };
+		F13625351E34CE2100ED545E /* ExpandingMenuItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = F13625341E34CE2100ED545E /* ExpandingMenuItem.swift */; };
 		F19C44051D29C14200457630 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F19C44041D29C14200457630 /* AppDelegate.swift */; };
 		F19C44071D29C14200457630 /* EditorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F19C44061D29C14200457630 /* EditorViewController.swift */; };
 		F19C440C1D29C14200457630 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F19C440B1D29C14200457630 /* Assets.xcassets */; };
@@ -48,6 +50,8 @@
 		F1347BF11E2512EC00E1784C /* Impact.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = Impact.ttf; path = Assets.xcassets/Impact.ttf; sourceTree = "<group>"; };
 		F1347BF41E25612300E1784C /* UITextViewLayer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UITextViewLayer.swift; sourceTree = "<group>"; };
 		F135A4BB1E22EA1300D974BC /* ReverseShowSegue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReverseShowSegue.swift; sourceTree = "<group>"; };
+		F13625321E34CE1A00ED545E /* ExpandingMenuButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExpandingMenuButton.swift; sourceTree = "<group>"; };
+		F13625341E34CE2100ED545E /* ExpandingMenuItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExpandingMenuItem.swift; sourceTree = "<group>"; };
 		F19C44011D29C14100457630 /* Testing image processing.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Testing image processing.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		F19C44041D29C14200457630 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		F19C44061D29C14200457630 /* EditorViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditorViewController.swift; sourceTree = "<group>"; usesTabs = 0; };
@@ -127,6 +131,8 @@
 				F1B11D2E1E1EF18A00283BFF /* UIImageViewLayer.swift */,
 				F1347BF41E25612300E1784C /* UITextViewLayer.swift */,
 				F1A07B1B1D2A662600EB6983 /* CustomToolbar.swift */,
+				F13625321E34CE1A00ED545E /* ExpandingMenuButton.swift */,
+				F13625341E34CE2100ED545E /* ExpandingMenuItem.swift */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -328,6 +334,8 @@
 				F135A4BC1E22EA1300D974BC /* ReverseShowSegue.swift in Sources */,
 				F1A07B1A1D2A619600EB6983 /* LayerStackUIView.swift in Sources */,
 				F1C1A5FD1E23C8BC00BF48F7 /* LinkedList.swift in Sources */,
+				F13625351E34CE2100ED545E /* ExpandingMenuItem.swift in Sources */,
+				F13625331E34CE1A00ED545E /* ExpandingMenuButton.swift in Sources */,
 				F19C44071D29C14200457630 /* EditorViewController.swift in Sources */,
 				F1B11D2F1E1EF18A00283BFF /* UIImageViewLayer.swift in Sources */,
 				F1C42E551E2268750016CC7E /* RenderViewController.swift in Sources */,

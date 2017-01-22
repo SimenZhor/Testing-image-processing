@@ -34,21 +34,11 @@
                                                     <constraint firstAttribute="height" constant="52" id="m4e-eW-oYx"/>
                                                 </constraints>
                                             </imageView>
-                                            <imageView contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" restorationIdentifier="tools" image="Settings" translatesAutoresizingMaskIntoConstraints="NO" id="p29-LA-jLd" userLabel="Tools">
-                                                <rect key="frame" x="0.0" y="0.0" width="52" height="52"/>
-                                                <constraints>
-                                                    <constraint firstAttribute="width" constant="52" id="8K8-XB-kz8"/>
-                                                    <constraint firstAttribute="height" constant="52" id="fOD-tX-qGa"/>
-                                                </constraints>
-                                            </imageView>
                                         </subviews>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                         <constraints>
-                                            <constraint firstItem="p29-LA-jLd" firstAttribute="leading" secondItem="nRy-o3-oTl" secondAttribute="leading" id="Q3h-6n-bq0"/>
                                             <constraint firstAttribute="bottom" secondItem="2G3-sx-r9J" secondAttribute="bottom" id="QDE-7v-9Ql"/>
-                                            <constraint firstAttribute="bottom" secondItem="p29-LA-jLd" secondAttribute="bottom" id="Z8k-lk-3FH"/>
                                             <constraint firstItem="2G3-sx-r9J" firstAttribute="top" secondItem="nRy-o3-oTl" secondAttribute="top" id="mdd-NN-RQh"/>
-                                            <constraint firstItem="p29-LA-jLd" firstAttribute="top" secondItem="nRy-o3-oTl" secondAttribute="top" id="uqZ-Wi-QWh"/>
                                             <constraint firstItem="2G3-sx-r9J" firstAttribute="centerX" secondItem="nRy-o3-oTl" secondAttribute="centerX" id="vpO-sF-Crh"/>
                                         </constraints>
                                     </view>
@@ -320,7 +310,6 @@
         </scene>
     </scenes>
     <resources>
-        <image name="Settings" width="25" height="25"/>
         <image name="Trash" width="25" height="25"/>
     </resources>
     <color key="tintColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
